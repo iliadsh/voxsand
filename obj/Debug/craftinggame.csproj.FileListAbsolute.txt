@@ -1,0 +1,13 @@
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\craftinggame.exe.config
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\craftinggame.exe
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\craftinggame.pdb
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.dll
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.pdb
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.xml
+C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.csprojAssemblyReference.cache
+C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.csproj.CopyComplete
+C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.exe
+C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.pdb
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\atlas.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\chunk_shader.frag
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\chunk_shader.vert
