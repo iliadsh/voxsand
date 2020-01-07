@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "craftinggame", "craftinggame.csproj", "{A81680FC-ED42-4A80-BAA9-9CD7C3720929}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Debug|x64.ActiveCfg = Debug|x64
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Debug|x64.Build.0 = Debug|x64
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Release|x64.ActiveCfg = Release|x64
+		{A81680FC-ED42-4A80-BAA9-9CD7C3720929}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4398E0B3-0A16-45AB-9C32-D434EB3C27A9}
+	EndGlobalSection
+EndGlobal

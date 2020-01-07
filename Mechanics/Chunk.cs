@@ -12,17 +12,23 @@ namespace craftinggame.Mechanics
         public Chunk((int x, int z) pos)
         {
             position = pos;
+            Task.Run(GenChunk);
+        }
+
+        private async Task GenChunk()
+        {
             Array.Clear(blocks, 0, blocks.Length);
             for (int x = 0; x < 16; x++)
             {
-                for (int y = 0; y < 256; y++)
+                for (int z = 0; z < 16; z++)
                 {
-                    for (int z = 0; z < 16; z++)
+                    for (int y = 0; y < 40 + 100; y++)
                     {
-                        if (y < 30) blocks[x, y, z] = 1;
+                        blocks[x, y, z] = 1;
                     }
                 }
             }
+            await GenVerts();
         }
 
         public (int x, int z) position;

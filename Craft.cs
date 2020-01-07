@@ -31,7 +31,7 @@ namespace craftinggame
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            player = new Player(1, Width / Height);
+            player = new Player(15, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
 
             player.CheckChunks();
