@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using craftinggame.Graphics;
 
 namespace craftinggame.Mechanics
 {
     class Chunk
     {
-        static OpenSimplexNoise noise = new OpenSimplexNoise();
+        public static OpenSimplexNoise noise = new OpenSimplexNoise();
 
         public Chunk((int x, int z) pos)
         {
             position = pos;
-            GenChunk();
         }
 
-        private void GenChunk()
+        public void GenChunk()
         {
+            blocks = new byte[16, 256, 16];
             Array.Clear(blocks, 0, blocks.Length);
             for (int x = 0; x < 16; x++)
             {
@@ -26,7 +27,10 @@ namespace craftinggame.Mechanics
                 {
                     for (int y = 0; y < 50 * noise.Evaluate((x + position.x * 16) / 100f, (z + position.z * 16) / 100f) + 100; y++)
                     {
-                        blocks[x, y, z] = 1;
+                        byte value = 1;
+                        if (y < 80)
+                            value = 2;
+                        blocks[x, y, z] = value;
                     }
                 }
             }
@@ -36,7 +40,7 @@ namespace craftinggame.Mechanics
         public ChunkMesh mesh = null;
         public bool needsRemesh = false;
 
-        public byte[,,] blocks = new byte[16, 256, 16];
+        public byte[,,] blocks = null;
         public float[] verts;
 
         public static (int x, int z) PosToChunkPos(float x, float z)
@@ -82,81 +86,88 @@ namespace craftinggame.Mechanics
                     {
                         if (blocks[x, y, z] != 0)
                         {
+                            float u = Texture.AtlasUnit();
                             if ((z == 0 && chunknz != null && chunknz.blocks[x, y, 15] == 0) || (z != 0 && blocks[x, y, z - 1] == 0))
                             {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] _front =
                                 {
-                                    0f + x,  1f + y, 0f + z, 0f, 1f, // top left 
-                                    1f + x,  1f + y, 0f + z, 1f, 1f, // top right
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    0f + x,  1f + y, 0f + z, 0f, 1f, // top left 
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    0f + x,  0f + y, 0f + z, 0f, 0f, // bottom left
+                                    0f + x,  1f + y, 0f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
+                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  1f + y, 0f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  0f + y, 0f + z, 0f + uv.u, 0f + uv.v, // bottom left
                                 };
                                 outVerts.AddRange(_front);
                             }
                             if ((z == 15 && chunkpz != null && chunkpz.blocks[x, y, 0] == 0) || (z != 15 && blocks[x, y, z + 1] == 0))
                             {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] _back =
                                 {
-                                    1f + x,  0f + y, 1f + z, 1f, 0f, // bottom right
-                                    1f + x,  1f + y, 1f + z, 1f, 1f, // top right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
-                                    0f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
-                                    1f + x,  0f + y, 1f + z, 1f, 0f, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    1f + x,  0f + y, 1f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    1f + x,  1f + y, 1f + z, u + uv.u, u + uv.v, // top right
+                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    0f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
+                                    1f + x,  0f + y, 1f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
                                 };
                                 outVerts.AddRange(_back);
                             }
                             if ((x == 0 && chunknx != null && chunknx.blocks[15, y, z] == 0) || (x != 0 && blocks[x - 1, y, z] == 0))
                             {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                 float[] _left =
                                 {
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left
-                                    0f + x,  1f + y, 0f + z, 1f, 1f, // top right
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    0f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
+                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left
+                                    0f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
+                                    0f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    0f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
                                 };
                                 outVerts.AddRange(_left);
                             }
                             if ((x == 15 && chunkpx != null && chunkpx.blocks[0, y, z] == 0) || (x != 15 && blocks[x + 1, y, z] == 0))
                             {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                 float[] _right =
                                 {
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    1f + x,  1f + y, 0f + z, 1f, 1f, // top right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, // top left 
-                                    1f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    1f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
+                                    1f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
+                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
                                 };
                                 outVerts.AddRange(_right);
                             }
                             if (y == 255 || blocks[x, y + 1, z] == 0)
                             {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                 float[] _top =
                                 {
-                                    1f + x,  1f + y, 0f + z, 1f, 0f, // bottom right
-                                    0f + x,  1f + y, 0f + z, 1f, 1f, // top right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
-                                    1f + x,  1f + y, 1f + z, 0f, 0f, // bottom left
-                                    1f + x,  1f + y, 0f + z, 1f, 0f, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    1f + x,  1f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
+                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  1f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
+                                    1f + x,  1f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
                                 };
                                 outVerts.AddRange(_top);
                             }
                             if (y == 0 || blocks[x, y - 1, z] == 0)
                             {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                 float[] _bottom =
                                 {
-                                    0f + x,  0f + y, 1f + z, 0f, 1f, // top left 
-                                    0f + x,  0f + y, 0f + z, 1f, 1f, // top right
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom 
-                                    0f + x,  0f + y, 1f + z, 0f, 1f, // top left 
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
-                                    1f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
+                                    0f + x,  0f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    0f + x,  0f + y, 0f + z, u + uv.u, u + uv.v, // top right
+                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom 
+                                    0f + x,  0f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
+                                    1f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
                                 };
                                 outVerts.AddRange(_bottom);
                             }

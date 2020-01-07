@@ -7,6 +7,16 @@ namespace craftinggame.Graphics
 {
     public class Texture
     {
+        public static (float u, float v) TexPosToAtlasCoord((int x, int y) pos)
+        {
+            return (pos.x * AtlasUnit(), pos.y * AtlasUnit());
+        }
+
+        public static float AtlasUnit()
+        {
+            return 1 / 16f;
+        }
+
         public readonly int Handle;
 
         public Texture(string path)
@@ -19,6 +29,8 @@ namespace craftinggame.Graphics
 
             using (var image = new Bitmap(path))
             {
+                image.RotateFlip(RotateFlipType.Rotate180FlipX);
+
                 var data = image.LockBits(
                     new Rectangle(0, 0, image.Width, image.Height),
                     ImageLockMode.ReadOnly,
@@ -35,10 +47,12 @@ namespace craftinggame.Graphics
                     data.Scan0);
             }
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            GL.GetFloat((GetPName)All.MaxTextureMaxAnisotropy, out float maxAniso);
+            GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)All.TextureMaxAnisotropy , maxAniso);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         }

@@ -74,6 +74,7 @@
     <Compile Include="Craft.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\ChunkMesh.cs" />
+    <Compile Include="Mechanics\Block.cs" />
     <Compile Include="Mechanics\Chunk.cs" />
     <Compile Include="Mechanics\Entity.cs" />
     <Compile Include="Mechanics\OpenSimplexNoise.cs" />

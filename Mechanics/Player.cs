@@ -17,7 +17,7 @@ namespace craftinggame.Mechanics
         public Player(int renderDistance, float aspectRatio)
         {
             this.renderDistance = renderDistance;
-            entity = new Entity(new Vector3(0, 200, 1));
+            entity = new Entity(new Vector3(0, (float)Chunk.noise.Evaluate(0, 0) + 102, 1));
             camera = new Camera(entity, aspectRatio);
         }
 
@@ -36,6 +36,7 @@ namespace craftinggame.Mechanics
                 }
             }
             List<Chunk> needsMeshing = new List<Chunk>();
+            List<Chunk> needsCreation = new List<Chunk>();
             for (int x = -renderDistance; x < renderDistance; x++)
             {
                 for (int z = -renderDistance; z < renderDistance; z++)
@@ -44,6 +45,7 @@ namespace craftinggame.Mechanics
                     if(!Craft.theCraft.chunks.ContainsKey(newpos))
                     {
                         Chunk chunk = new Chunk(newpos);
+                        needsCreation.Add(chunk);
 
                         var pospx = (newpos.x + 1, newpos.z);
                         Chunk chunkpx = Craft.theCraft.chunks.ContainsKey(pospx) ? Craft.theCraft.chunks[pospx] : null;
@@ -54,7 +56,6 @@ namespace craftinggame.Mechanics
                         var posnz = (newpos.x, newpos.z - 1);
                         Chunk chunknz = Craft.theCraft.chunks.ContainsKey(posnz) ? Craft.theCraft.chunks[posnz] : null;
 
-                        Craft.theCraft.chunks[newpos] = chunk;
                         needsMeshing.Add(chunk);
                         if(chunkpx != null && chunkpx.mesh != null)
                         {
@@ -74,6 +75,10 @@ namespace craftinggame.Mechanics
                         }
                     }
                 }
+            }
+            foreach(Chunk chunk in needsCreation)
+            {
+                Craft.theCraft.meshingQueue.Enqueue(chunk);
             }
             foreach(Chunk chunk in needsMeshing)
             {

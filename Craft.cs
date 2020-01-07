@@ -24,7 +24,7 @@ namespace craftinggame
         public ConcurrentQueue<Chunk> meshingQueue = new ConcurrentQueue<Chunk>();
 
         public Craft(int width, int height, string title)
-            : base(width, height, GraphicsMode.Default, title) {}
+            : base(width, height, new GraphicsMode(new ColorFormat(8, 8, 8, 8), 24), title) {}
 
         protected override void OnLoad(EventArgs e)
         {
@@ -53,6 +53,12 @@ namespace craftinggame
                 if (meshingQueue.IsEmpty) continue;
                 if(meshingQueue.TryDequeue(out Chunk chunk))
                 {
+                    if (chunk.blocks == null)
+                    {
+                        chunk.GenChunk();
+                        chunks[chunk.position] = chunk;
+                        continue;
+                    }
                     chunk.GenVerts();
                 }
             }
@@ -63,7 +69,7 @@ namespace craftinggame
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            Title = "FPS: " + 1 / e.Time;
+            Title = "FPS: " + (int)(1 / e.Time);
 
             if (!Focused) // check to see if the window is focused
             {
@@ -132,6 +138,7 @@ namespace craftinggame
                     if (chunk.Value.mesh != null)
                         chunk.Value.KillMesh();
                     chunk.Value.mesh = new ChunkMesh(chunk.Value.verts);
+                    chunk.Value.verts = null;
                     chunk.Value.needsRemesh = false;
                 }
                 if (chunk.Value.mesh != null)
