@@ -74,6 +74,7 @@
     <Compile Include="Craft.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\ChunkMesh.cs" />
+    <Compile Include="Graphics\ChunkTexture.cs" />
     <Compile Include="Mechanics\Block.cs" />
     <Compile Include="Mechanics\Chunk.cs" />
     <Compile Include="Mechanics\Entity.cs" />
@@ -96,7 +97,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\atlas.png">
+    <Content Include="Resources\textures\grass_side.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\textures\grass_top.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\textures\sand.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

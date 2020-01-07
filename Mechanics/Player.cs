@@ -46,6 +46,7 @@ namespace craftinggame.Mechanics
                     {
                         Chunk chunk = new Chunk(newpos);
                         needsCreation.Add(chunk);
+                        Craft.theCraft.chunks[chunk.position] = chunk;
 
                         var pospx = (newpos.x + 1, newpos.z);
                         Chunk chunkpx = Craft.theCraft.chunks.ContainsKey(pospx) ? Craft.theCraft.chunks[pospx] : null;
@@ -56,6 +57,7 @@ namespace craftinggame.Mechanics
                         var posnz = (newpos.x, newpos.z - 1);
                         Chunk chunknz = Craft.theCraft.chunks.ContainsKey(posnz) ? Craft.theCraft.chunks[posnz] : null;
 
+                        
                         needsMeshing.Add(chunk);
                         if(chunkpx != null && chunkpx.mesh != null)
                         {

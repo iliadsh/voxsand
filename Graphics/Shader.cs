@@ -75,9 +75,10 @@ namespace craftinggame.Graphics
             GL.LinkProgram(program);
 
             GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
+            
             if (code != (int)All.True)
             {
-                throw new Exception($"Error occurred whilst linking Program({program})");
+                throw new Exception($"Error occurred whilst linking Program({program}), {GL.GetProgramInfoLog(program)}");
             }
         }
 

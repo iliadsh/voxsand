@@ -14,7 +14,6 @@ D:\repos\CraftingGame\obj\Debug\craftinggame.csprojAssemblyReference.cache
 D:\repos\CraftingGame\obj\Debug\craftinggame.csproj.CoreCompileInputs.cache
 D:\repos\CraftingGame\obj\Debug\craftinggame.exe
 D:\repos\CraftingGame\obj\Debug\craftinggame.pdb
-D:\repos\CraftingGame\bin\Debug\Resources\atlas.png
 D:\repos\CraftingGame\bin\Debug\Resources\chunk_shader.frag
 D:\repos\CraftingGame\bin\Debug\Resources\chunk_shader.vert
 D:\repos\CraftingGame\bin\Debug\craftinggame.exe.config
@@ -23,3 +22,7 @@ D:\repos\CraftingGame\bin\Debug\craftinggame.pdb
 D:\repos\CraftingGame\bin\Debug\OpenTK.pdb
 D:\repos\CraftingGame\bin\Debug\OpenTK.xml
 D:\repos\CraftingGame\obj\Debug\craftinggame.csproj.CopyComplete
+D:\repos\CraftingGame\bin\Debug\OpenTK.dll
+D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_side.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_top.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\sand.png

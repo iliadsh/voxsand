@@ -19,7 +19,7 @@ namespace craftinggame.Mechanics
             Left
         }
 
-        public static (float u, float v) FaceToTexcoord(byte id, Face face)
+        public static float FaceToTexcoord(byte id, Face face)
         {
             switch (id)
             {
@@ -27,14 +27,14 @@ namespace craftinggame.Mechanics
                     switch (face)
                     {
                         case Face.Top:
-                            return Texture.TexPosToAtlasCoord((0, 15));
+                            return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass_top.png");
                         default:
-                            return Texture.TexPosToAtlasCoord((3, 15));
+                            return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass_side.png");
                     }
                 case 2:
-                    return Texture.TexPosToAtlasCoord((2, 14));
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\sand.png");
                 default:
-                    return (0, 0);
+                    return 0;
             }
         }
     }

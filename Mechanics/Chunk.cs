@@ -25,10 +25,10 @@ namespace craftinggame.Mechanics
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    for (int y = 0; y < 50 * noise.Evaluate((x + position.x * 16) / 100f, (z + position.z * 16) / 100f) + 100; y++)
+                    for (int y = 0; y < 20 * noise.Evaluate((x + position.x * 16) / 50f, (z + position.z * 16) / 50f) + 100; y++)
                     {
                         byte value = 1;
-                        if (y < 80)
+                        if (y < 90)
                             value = 2;
                         blocks[x, y, z] = value;
                     }
@@ -86,60 +86,59 @@ namespace craftinggame.Mechanics
                     {
                         if (blocks[x, y, z] != 0)
                         {
-                            float u = Texture.AtlasUnit();
-                            if ((z == 0 && chunknz != null && chunknz.blocks[x, y, 15] == 0) || (z != 0 && blocks[x, y, z - 1] == 0))
+                            if ((z == 0 && chunknz != null && chunknz.blocks != null && chunknz.blocks[x, y, 15] == 0) || (z != 0 && blocks[x, y, z - 1] == 0))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] _front =
                                 {
-                                    0f + x,  1f + y, 0f + z, 0f + uv.u, u + uv.v, // top left 
-                                    1f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
-                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  1f + y, 0f + z, 0f + uv.u, u + uv.v, // top left 
-                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  0f + y, 0f + z, 0f + uv.u, 0f + uv.v, // bottom left
+                                    0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  0f + y, 0f + z, 0f, 0f, uv, // bottom left
                                 };
                                 outVerts.AddRange(_front);
                             }
-                            if ((z == 15 && chunkpz != null && chunkpz.blocks[x, y, 0] == 0) || (z != 15 && blocks[x, y, z + 1] == 0))
+                            if ((z == 15 && chunkpz != null && chunkpz.blocks != null && chunkpz.blocks[x, y, 0] == 0) || (z != 15 && blocks[x, y, z + 1] == 0))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] _back =
                                 {
-                                    1f + x,  0f + y, 1f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    1f + x,  1f + y, 1f + z, u + uv.u, u + uv.v, // top right
-                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
-                                    0f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
-                                    1f + x,  0f + y, 1f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  1f + y, 1f + z, 1f, 1f, uv, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
                                 };
                                 outVerts.AddRange(_back);
                             }
-                            if ((x == 0 && chunknx != null && chunknx.blocks[15, y, z] == 0) || (x != 0 && blocks[x - 1, y, z] == 0))
+                            if ((x == 0 && chunknx != null && chunknx.blocks != null && chunknx.blocks[15, y, z] == 0) || (x != 0 && blocks[x - 1, y, z] == 0))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                 float[] _left =
                                 {
-                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left
-                                    0f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
-                                    0f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
-                                    0f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
                                 };
                                 outVerts.AddRange(_left);
                             }
-                            if ((x == 15 && chunkpx != null && chunkpx.blocks[0, y, z] == 0) || (x != 15 && blocks[x + 1, y, z] == 0))
+                            if ((x == 15 && chunkpx != null && chunkpx.blocks != null && chunkpx.blocks[0, y, z] == 0) || (x != 15 && blocks[x + 1, y, z] == 0))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                 float[] _right =
                                 {
-                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    1f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
-                                    1f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
-                                    1f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
-                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    1f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
                                 };
                                 outVerts.AddRange(_right);
                             }
@@ -148,12 +147,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                 float[] _top =
                                 {
-                                    1f + x,  1f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  1f + y, 0f + z, u + uv.u, u + uv.v, // top right
-                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
-                                    1f + x,  1f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
-                                    1f + x,  1f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  1f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
                                 };
                                 outVerts.AddRange(_top);
                             }
@@ -162,12 +161,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                 float[] _bottom =
                                 {
-                                    0f + x,  0f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
-                                    0f + x,  0f + y, 0f + z, u + uv.u, u + uv.v, // top right
-                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom 
-                                    0f + x,  0f + y, 1f + z, 0f + uv.u, u + uv.v, // top left 
-                                    1f + x,  0f + y, 0f + z, u + uv.u, 0f + uv.v, // bottom right
-                                    1f + x,  0f + y, 1f + z, 0f + uv.u, 0f + uv.v, // bottom left
+                                    0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 1f, uv, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom 
+                                    0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
                                 };
                                 outVerts.AddRange(_bottom);
                             }

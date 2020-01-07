@@ -10,8 +10,8 @@ namespace craftinggame.Graphics
 {
     class ChunkMesh
     {
-        static Shader chunkShader = new Shader("chunk_shader.vert", "chunk_shader.frag");
-        static Texture chunkTexture = new Texture("atlas.png");
+        public static Shader chunkShader = new Shader("chunk_shader.vert", "chunk_shader.frag");
+        public static ChunkTexture chunkTexture = new ChunkTexture("textures");
 
         public static void PreludeRender()
         {
@@ -33,14 +33,18 @@ namespace craftinggame.Graphics
 
             int vertexLocation = chunkShader.GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
 
 
             int texCoordLocation = chunkShader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
 
-            vertAmount = verts.Length / 5;
+            int texLayerLocation = chunkShader.GetAttribLocation("aLayer");
+            GL.EnableVertexAttribArray(texLayerLocation);
+            GL.VertexAttribPointer(texLayerLocation, 1, VertexAttribPointerType.Float, false, 6 * sizeof(float), 5 * sizeof(float));
+
+            vertAmount = verts.Length / 6;
         }
 
         public void Render((int x, int z) pos)
