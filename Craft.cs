@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace craftinggame
     {
         public static Craft theCraft;
 
-        public Dictionary<(int x, int y), Chunk> chunks;
+        public ConcurrentDictionary<(int x, int z), Chunk> chunks;
         public Player player;
 
         public Craft(int width, int height, string title)
@@ -30,8 +31,8 @@ namespace craftinggame
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            player = new Player(10, Width / Height);
-            chunks = new Dictionary<(int x, int y), Chunk>();
+            player = new Player(1, Width / Height);
+            chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
 
             player.CheckChunks();
 
@@ -75,6 +76,9 @@ namespace craftinggame
             if (input.IsKeyDown(Key.LShift))
                 player.entity.Position -= player.camera.Up * cameraSpeed * (float)e.Time; // Down
 
+            if (input.IsKeyDown(Key.W) || input.IsKeyDown(Key.S) || input.IsKeyDown(Key.A) || input.IsKeyDown(Key.D))
+                player.CheckChunks();
+
             // Get the mouse state
             var mouse = Mouse.GetState();
 
@@ -104,7 +108,7 @@ namespace craftinggame
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             ChunkMesh.PreludeRender();
-            foreach(KeyValuePair<(int x, int y), Chunk> chunk in chunks)
+            foreach(KeyValuePair<(int x, int z), Chunk> chunk in chunks)
             {
                 if (chunk.Value.needsRemesh)
                 {

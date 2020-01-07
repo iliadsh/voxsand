@@ -17,24 +17,34 @@ namespace craftinggame.Mechanics
         public Player(int renderDistance, float aspectRatio)
         {
             this.renderDistance = renderDistance;
-            entity = new Entity(new Vector3(0, 0, 1));
+            entity = new Entity(new Vector3(0, 40, 1));
             camera = new Camera(entity, aspectRatio);
         }
 
         public void CheckChunks()
         {
+            var pos = Chunk.PosToChunkPos(entity.Position.X, entity.Position.Z);
+            foreach ((int x, int z) chunk in Craft.theCraft.chunks.Keys)
+            {
+                if (chunk.x > Craft.theCraft.player.renderDistance + pos.x
+                    || chunk.x < -Craft.theCraft.player.renderDistance + pos.x
+                    || chunk.z > Craft.theCraft.player.renderDistance + pos.z
+                    || chunk.z < -Craft.theCraft.player.renderDistance + pos.z)
+                {
+                    Craft.theCraft.chunks[chunk].KillMesh();
+                    if (!Craft.theCraft.chunks.TryRemove(chunk, out Chunk value)) Console.WriteLine("Failed to remove chunk.");
+                }
+            }
             for (int x = -renderDistance; x < renderDistance; x++)
             {
                 for (int z = -renderDistance; z < renderDistance; z++)
                 {
-                    var pos = Chunk.PosToChunkOffset(entity.Position.X, entity.Position.Y);
-                    pos.x += x;
-                    pos.z += z;
-                    if(!Craft.theCraft.chunks.ContainsKey(pos))
+                    var newpos = (pos.x + x, pos.z + z);
+                    if(!Craft.theCraft.chunks.ContainsKey(newpos))
                     {
-                        Chunk chunk = new Chunk(pos);
+                        Chunk chunk = new Chunk(newpos);
                         chunk.GenVertsAsync();
-                        Craft.theCraft.chunks[pos] = chunk;
+                        Craft.theCraft.chunks[newpos] = chunk;
                     }
                 }
             }

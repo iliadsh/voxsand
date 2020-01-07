@@ -48,6 +48,13 @@ namespace craftinggame.Mechanics
             return (ox, oz);
         }
 
+        public void KillMesh()
+        {
+            if (mesh == null) return;
+            mesh.Cleanup();
+            mesh = null;
+        }
+
         public void GenVertsAsync()
         {
             Task.Run(GenVerts);
@@ -64,18 +71,83 @@ namespace craftinggame.Mechanics
                     {
                         if (blocks[x, y, z] != 0)
                         {
-                            if (z == 0 || blocks[x, y, z] == 0)
+                            if (z == 0 || blocks[x, y, z - 1] == 0)
                             {
                                 float[] _front =
                                 {
-                                    1f + x,  0f + y, 0.0f + z, 1.0f, 0.0f, // bottom right
-                                    1f + x,  1f + y, 0.0f + z, 1.0f, 1.0f, // top right
-                                    0f + x,  1f + y, 0.0f + z, 0.0f, 1.0f, // top left 
-                                    0f + x,  0f + y, 0.0f + z, 0.0f, 0.0f, // bottom left
-                                    1f + x,  0f + y, 0.0f + z, 1.0f, 0.0f, // bottom right
-                                    0f + x,  1f + y, 0.0f + z, 0.0f, 1.0f, // top left 
+                                    0f + x,  1f + y, 0f + z, 0f, 1f, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 0f + z, 0f, 1f, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    0f + x,  0f + y, 0f + z, 0f, 0f, // bottom left
                                 };
                                 outVerts.AddRange(_front);
+                            }
+                            if (z == 15 || blocks[x, y, z + 1] == 0)
+                            {
+                                float[] _back =
+                                {
+                                    1f + x,  0f + y, 1f + z, 1f, 0f, // bottom right
+                                    1f + x,  1f + y, 1f + z, 1f, 1f, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
+                                    1f + x,  0f + y, 1f + z, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                };
+                                outVerts.AddRange(_back);
+                            }
+                            if (x == 0 || blocks[x - 1, y, z] == 0)
+                            {
+                                float[] _left =
+                                {
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, // top right
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
+                                };
+                                outVerts.AddRange(_left);
+                            }
+                            if (x == 15 || blocks[x + 1, y, z] == 0)
+                            {
+                                float[] _right =
+                                {
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, // top right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                };
+                                outVerts.AddRange(_right);
+                            }
+                            if (y == 255 || blocks[x, y + 1, z] == 0)
+                            {
+                                float[] _top =
+                                {
+                                    1f + x,  1f + y, 0f + z, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                    1f + x,  1f + y, 1f + z, 0f, 0f, // bottom left
+                                    1f + x,  1f + y, 0f + z, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, // top left 
+                                };
+                                outVerts.AddRange(_top);
+                            }
+                            if (y == 0 || blocks[x, y - 1, z] == 0)
+                            {
+                                float[] _bottom =
+                                {
+                                    0f + x,  0f + y, 1f + z, 0f, 1f, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 1f, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom 
+                                    0f + x,  0f + y, 1f + z, 0f, 1f, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, // bottom right
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, // bottom left
+                                };
+                                outVerts.AddRange(_bottom);
                             }
                         }
                     }

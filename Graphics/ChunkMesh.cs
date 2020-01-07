@@ -53,5 +53,11 @@ namespace craftinggame.Graphics
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, vertAmount);
         }
+
+        public void Cleanup()
+        {
+            GL.DeleteVertexArray(VAO);
+            GL.DeleteBuffer(VBO);
+        }
     }
 }

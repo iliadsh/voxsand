@@ -10,7 +10,7 @@ namespace craftinggame
     {
         static void Main(string[] args)
         {
-            using (Craft game = new Craft(800, 600, "CraftingGame"))
+            using (Craft game = new Craft(1600, 900, "CraftingGame"))
             {
                 game.Run();
             }
