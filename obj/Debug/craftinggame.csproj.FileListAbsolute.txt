@@ -1,7 +1,6 @@
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\craftinggame.exe.config
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\craftinggame.exe
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\craftinggame.pdb
-C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.dll
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.pdb
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.xml
 C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.csprojAssemblyReference.cache

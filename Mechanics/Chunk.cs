@@ -9,26 +9,27 @@ namespace craftinggame.Mechanics
 {
     class Chunk
     {
+        static OpenSimplexNoise noise = new OpenSimplexNoise();
+
         public Chunk((int x, int z) pos)
         {
             position = pos;
-            Task.Run(GenChunk);
+            GenChunk();
         }
 
-        private async Task GenChunk()
+        private void GenChunk()
         {
             Array.Clear(blocks, 0, blocks.Length);
             for (int x = 0; x < 16; x++)
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    for (int y = 0; y < 40 + 100; y++)
+                    for (int y = 0; y < 50 * noise.Evaluate((x + position.x * 16) / 100f, (z + position.z * 16) / 100f) + 100; y++)
                     {
                         blocks[x, y, z] = 1;
                     }
                 }
             }
-            await GenVerts();
         }
 
         public (int x, int z) position;
@@ -61,13 +62,17 @@ namespace craftinggame.Mechanics
             mesh = null;
         }
 
-        public void GenVertsAsync()
+        public void GenVerts()
         {
-            Task.Run(GenVerts);
-        }
+            var pospx = (position.x + 1, position.z);
+            Chunk chunkpx = Craft.theCraft.chunks.ContainsKey(pospx) ? Craft.theCraft.chunks[pospx] : null;
+            var posnx = (position.x - 1, position.z);
+            Chunk chunknx = Craft.theCraft.chunks.ContainsKey(posnx) ? Craft.theCraft.chunks[posnx] : null;
+            var pospz = (position.x, position.z + 1);
+            Chunk chunkpz = Craft.theCraft.chunks.ContainsKey(pospz) ? Craft.theCraft.chunks[pospz] : null;
+            var posnz = (position.x, position.z - 1);
+            Chunk chunknz = Craft.theCraft.chunks.ContainsKey(posnz) ? Craft.theCraft.chunks[posnz] : null;
 
-        private async Task GenVerts()
-        {
             List<float> outVerts = new List<float>();
             for (int x = 0; x < 16; x++)
             {
@@ -77,7 +82,7 @@ namespace craftinggame.Mechanics
                     {
                         if (blocks[x, y, z] != 0)
                         {
-                            if (z == 0 || blocks[x, y, z - 1] == 0)
+                            if ((z == 0 && chunknz != null && chunknz.blocks[x, y, 15] == 0) || (z != 0 && blocks[x, y, z - 1] == 0))
                             {
                                 float[] _front =
                                 {
@@ -90,7 +95,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_front);
                             }
-                            if (z == 15 || blocks[x, y, z + 1] == 0)
+                            if ((z == 15 && chunkpz != null && chunkpz.blocks[x, y, 0] == 0) || (z != 15 && blocks[x, y, z + 1] == 0))
                             {
                                 float[] _back =
                                 {
@@ -103,7 +108,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_back);
                             }
-                            if (x == 0 || blocks[x - 1, y, z] == 0)
+                            if ((x == 0 && chunknx != null && chunknx.blocks[15, y, z] == 0) || (x != 0 && blocks[x - 1, y, z] == 0))
                             {
                                 float[] _left =
                                 {
@@ -116,7 +121,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_left);
                             }
-                            if (x == 15 || blocks[x + 1, y, z] == 0)
+                            if ((x == 15 && chunkpx != null && chunkpx.blocks[0, y, z] == 0) || (x != 15 && blocks[x + 1, y, z] == 0))
                             {
                                 float[] _right =
                                 {

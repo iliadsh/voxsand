@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
@@ -20,6 +20,9 @@ namespace craftinggame
         public ConcurrentDictionary<(int x, int z), Chunk> chunks;
         public Player player;
 
+        Thread chunkMeshingThread;
+        public ConcurrentQueue<Chunk> meshingQueue = new ConcurrentQueue<Chunk>();
+
         public Craft(int width, int height, string title)
             : base(width, height, GraphicsMode.Default, title) {}
 
@@ -31,14 +34,28 @@ namespace craftinggame
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 
-            player = new Player(15, Width / Height);
+            player = new Player(10, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
+            chunkMeshingThread = new Thread(MeshChunks);
+            chunkMeshingThread.Start();
 
             player.CheckChunks();
 
             CursorVisible = false;
 
             base.OnLoad(e);
+        }
+
+        private void MeshChunks()
+        {
+            while (true)
+            {
+                if (meshingQueue.IsEmpty) continue;
+                if(meshingQueue.TryDequeue(out Chunk chunk))
+                {
+                    chunk.GenVerts();
+                }
+            }
         }
 
         private bool _firstMove = true;
@@ -112,6 +129,8 @@ namespace craftinggame
             {
                 if (chunk.Value.needsRemesh)
                 {
+                    if (chunk.Value.mesh != null)
+                        chunk.Value.KillMesh();
                     chunk.Value.mesh = new ChunkMesh(chunk.Value.verts);
                     chunk.Value.needsRemesh = false;
                 }
@@ -128,7 +147,7 @@ namespace craftinggame
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
-            if (Focused) // check to see if the window is focused
+            if (Focused) 
             {
                 Mouse.SetPosition(X + Width / 2f, Y + Height / 2f);
             }
@@ -145,6 +164,7 @@ namespace craftinggame
 
         protected override void OnUnload(EventArgs e)
         {
+            chunkMeshingThread.Abort();
             base.OnUnload(e);
         }
     }

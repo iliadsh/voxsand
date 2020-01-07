@@ -76,7 +76,7 @@
     <Compile Include="Graphics\ChunkMesh.cs" />
     <Compile Include="Mechanics\Chunk.cs" />
     <Compile Include="Mechanics\Entity.cs" />
-    <Compile Include="Mechanics\NoiseMaker.cs" />
+    <Compile Include="Mechanics\OpenSimplexNoise.cs" />
     <Compile Include="Mechanics\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
