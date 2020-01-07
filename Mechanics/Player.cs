@@ -17,7 +17,7 @@ namespace craftinggame.Mechanics
         public Player(int renderDistance, float aspectRatio)
         {
             this.renderDistance = renderDistance;
-            entity = new Entity(new Vector3(0, 1, 0));
+            entity = new Entity(new Vector3(0, 0, 1));
             camera = new Camera(entity, aspectRatio);
         }
 
@@ -25,11 +25,11 @@ namespace craftinggame.Mechanics
         {
             for (int x = -renderDistance; x < renderDistance; x++)
             {
-                for (int y = -renderDistance; y < renderDistance; y++)
+                for (int z = -renderDistance; z < renderDistance; z++)
                 {
                     var pos = Chunk.PosToChunkOffset(entity.Position.X, entity.Position.Y);
                     pos.x += x;
-                    pos.y += y;
+                    pos.z += z;
                     if(!Craft.theCraft.chunks.ContainsKey(pos))
                     {
                         Chunk chunk = new Chunk(pos);

@@ -25,24 +25,75 @@ namespace craftinggame
         protected override void OnLoad(EventArgs e)
         {
             theCraft = this;
+            VSync = VSyncMode.Off;
             GL.ClearColor(0.01176470588f, 0.59607843137f, 0.98823529411f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.CullFace);
 
-            player = new Player(5, Width / Height);
+            player = new Player(10, Width / Height);
             chunks = new Dictionary<(int x, int y), Chunk>();
 
             player.CheckChunks();
 
+            CursorVisible = false;
+
             base.OnLoad(e);
         }
 
+        private bool _firstMove = true;
+        private Vector2 _lastPos;
+
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
+            Title = "FPS: " + 1 / e.Time;
+
+            if (!Focused) // check to see if the window is focused
+            {
+                return;
+            }
+
             KeyboardState input = Keyboard.GetState();
 
             if (input.IsKeyDown(Key.Escape))
             {
                 Exit();
+            }
+
+            const float cameraSpeed = 10.5f;
+            const float sensitivity = 0.002f;
+
+            if (input.IsKeyDown(Key.W))
+                player.entity.Position += player.camera.Front * cameraSpeed * (float)e.Time; // Forward 
+            if (input.IsKeyDown(Key.S))
+                player.entity.Position -= player.camera.Front * cameraSpeed * (float)e.Time; // Backwards
+            if (input.IsKeyDown(Key.A))
+                player.entity.Position -= player.camera.Right * cameraSpeed * (float)e.Time; // Left
+            if (input.IsKeyDown(Key.D))
+                player.entity.Position += player.camera.Right * cameraSpeed * (float)e.Time; // Right
+            if (input.IsKeyDown(Key.Space))
+                player.entity.Position += player.camera.Up * cameraSpeed * (float)e.Time; // Up 
+            if (input.IsKeyDown(Key.LShift))
+                player.entity.Position -= player.camera.Up * cameraSpeed * (float)e.Time; // Down
+
+            // Get the mouse state
+            var mouse = Mouse.GetState();
+
+            if (_firstMove) // this bool variable is initially set to true
+            {
+                _lastPos = new Vector2(mouse.X, mouse.Y);
+                _firstMove = false;
+            }
+            else
+            {
+                // Calculate the offset of the mouse position
+                var deltaX = mouse.X - _lastPos.X;
+                var deltaY = mouse.Y - _lastPos.Y;
+                _lastPos = new Vector2(mouse.X, mouse.Y);
+
+                // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
+                player.entity.Yaw += deltaX * sensitivity;
+                player.entity.Pitch -= deltaY * sensitivity; // reversed since y-coordinates range from bottom to top
+                player.camera.UpdateVectors();
             }
 
             base.OnUpdateFrame(e);
@@ -71,9 +122,20 @@ namespace craftinggame
             base.OnRenderFrame(e);
         }
 
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            if (Focused) // check to see if the window is focused
+            {
+                Mouse.SetPosition(X + Width / 2f, Y + Height / 2f);
+            }
+
+            base.OnMouseMove(e);
+        }
+
         protected override void OnResize(EventArgs e)
         {
             GL.Viewport(0, 0, Width, Height);
+            player.camera.AspectRatio = Width / (float)Height;
             base.OnResize(e);
         }
 

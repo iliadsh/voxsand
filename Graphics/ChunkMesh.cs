@@ -43,10 +43,10 @@ namespace craftinggame.Graphics
             vertAmount = verts.Length / 5;
         }
 
-        public void Render((int x, int y) pos)
+        public void Render((int x, int z) pos)
         {
             GL.BindVertexArray(VAO);
-            var model = Matrix4.Identity * Matrix4.CreateTranslation(pos.x * 16, pos.y * 16, 0);
+            var model = Matrix4.Identity * Matrix4.CreateTranslation(pos.x * 16, 0, pos.z * 16);
             chunkShader.SetMatrix4("model", model);
             chunkShader.SetMatrix4("view", Craft.theCraft.player.camera.GetViewMatrix());
             chunkShader.SetMatrix4("projection", Craft.theCraft.player.camera.GetProjectionMatrix());

@@ -23,7 +23,7 @@ namespace craftinggame.Mechanics
             get => _pitch;
             set
             {
-                var angle = MathHelper.Clamp(value, -MathHelper.PiOver2, MathHelper.PiOver2);
+                var angle = MathHelper.Clamp(value, -MathHelper.PiOver2 + 0.0001f, MathHelper.PiOver2 - 0.0001f);
                 _pitch = angle;
             }
         }

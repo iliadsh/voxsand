@@ -42,10 +42,10 @@ namespace craftinggame.Graphics
 
         public Matrix4 GetProjectionMatrix()
         {
-            return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);
+            return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 5000f);
         }
 
-        private void UpdateVectors()
+        public void UpdateVectors()
         {
             _front.X = (float)Math.Cos(_entity.Pitch) * (float)Math.Cos(_entity.Yaw);
             _front.Y = (float)Math.Sin(_entity.Pitch);
@@ -53,7 +53,6 @@ namespace craftinggame.Graphics
             _front = Vector3.Normalize(_front);
 
             _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
-            _up = Vector3.Normalize(Vector3.Cross(_right, _front));
         }
     }
 }
