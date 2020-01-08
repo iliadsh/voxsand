@@ -30,7 +30,7 @@ namespace craftinggame
         {
             theCraft = this;
             VSync = VSyncMode.Off;
-            GL.ClearColor(0.01176470588f, 0.59607843137f, 0.98823529411f, 1.0f);
+            GL.ClearColor(0.01176470588f, 0.59607843137f, 0.68823529411f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
 

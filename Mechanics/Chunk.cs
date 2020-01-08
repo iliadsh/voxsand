@@ -28,7 +28,7 @@ namespace craftinggame.Mechanics
                 for (int z = 0; z < 16; z++)
                 {
                     bool sand = noise.Evaluate((x + position.x * 16) / 50f, (z + position.z * 16) / 50f) > 0.1;
-                    for (int y = 0; y < CalculateNoise(x + position.x * 16, z + position.z * 16); y++)
+                    for (int y = 0; y < CalculateForestNoise(x + position.x * 16, z + position.z * 16); y++)
                     {
                         byte value = 1;
                         if (sand)
@@ -39,7 +39,7 @@ namespace craftinggame.Mechanics
             }
         }
 
-        public static int CalculateNoise(int x, int z)
+        public static int CalculateForestNoise(int x, int z)
         {
             return (int)
                 (60 * Math.Pow(noise.Evaluate(x / 50f, z / 50f), 3) +
