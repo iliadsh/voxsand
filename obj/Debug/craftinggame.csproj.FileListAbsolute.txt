@@ -7,7 +7,6 @@ C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.csp
 C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.csproj.CopyComplete
 C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.exe
 C:\Users\abigp\source\repos\craftinggame\craftinggame\obj\Debug\craftinggame.pdb
-C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\atlas.png
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\chunk_shader.frag
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\chunk_shader.vert
 D:\repos\CraftingGame\obj\Debug\craftinggame.csprojAssemblyReference.cache
@@ -28,3 +27,14 @@ D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_top.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\sand.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\stone.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\dirt.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\dirt.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\grass_side.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\grass_top.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\sand.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\stone.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\grass.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\oak_log.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\birch_leaves.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\cactus_side.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\cactus_top.png
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\dead_bush.png

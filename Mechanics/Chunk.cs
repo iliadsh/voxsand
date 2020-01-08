@@ -27,12 +27,28 @@ namespace craftinggame.Mechanics
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    bool sand = noise.Evaluate((x + position.x * 16) / 50f, (z + position.z * 16) / 50f) > 0.1;
-                    for (int y = 0; y < CalculateForestNoise(x + position.x * 16, z + position.z * 16); y++)
+                    bool sand = noise.Evaluate((x + position.x * 16) / 200f, (z + position.z * 16) / 200f) > 0.1;
+                    int high = !sand ? CalculateForestNoise(x + position.x * 16, z + position.z * 16) : CalculateDesertNoise(x + position.x * 16, z + position.z * 16);
+                    high = (int)(high * (Math.Pow(noise.Evaluate((x + position.x * 16) / 200f, (z + position.z * 16) / 200f), 3) + 1));
+                    if (rand.Next(0, 40) > 38)
+                    {
+                        blocks[x, high, z] = !sand ? (byte)5 : (byte)7;
+                    }
+                    else if (sand && rand.Next(0, 1000) > 998)
+                    {
+                        blocks[x, high, z] = 6;
+                        blocks[x, high + 1, z] = 6;
+                        blocks[x, high + 2, z] = 6;
+                    }
+                    for (int y = 0; y < high; y++)
                     {
                         byte value = 1;
                         if (sand)
                             value = 2;
+                        else if (y < high - 1)
+                        {
+                            value = 3;
+                        }
                         blocks[x, y, z] = value;
                     }
                 }
@@ -42,9 +58,15 @@ namespace craftinggame.Mechanics
         public static int CalculateForestNoise(int x, int z)
         {
             return (int)
-                (60 * Math.Pow(noise.Evaluate(x / 50f, z / 50f), 3) +
-                30 * Math.Pow(noise.Evaluate(x / 25f, z / 25f), 3) +
-                15 * Math.Pow(noise.Evaluate(x / 14f, z / 14f), 3) +
+                (40 * Math.Pow(noise.Evaluate(x / 50f, z / 50f), 3) +
+                20 * Math.Pow(noise.Evaluate(x / 25f, z / 25f), 3) +
+                10 * Math.Pow(noise.Evaluate(x / 14f, z / 14f), 3) +
+                100);
+        }
+        public static int CalculateDesertNoise(int x, int z)
+        {
+            return (int)
+                (30 * Math.Pow(noise.Evaluate(x / 100f, z / 100f), 3) +
                 100);
         }
 
@@ -98,7 +120,143 @@ namespace craftinggame.Mechanics
                     {
                         if (blocks[x, y, z] != 0)
                         {
-                            if ((z == 0 && chunknz != null && chunknz.blocks != null && chunknz.blocks[x, y, 15] == 0) || (z != 0 && blocks[x, y, z - 1] == 0))
+                            if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Grass)
+                            {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
+                                float[] left_front =
+                                {
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                };
+                                outVerts.AddRange(left_front);
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
+                                float[] left_back =
+                                {
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                };
+                                outVerts.AddRange(left_back);
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
+                                float[] right_front =
+                                {
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                };
+                                outVerts.AddRange(right_front);
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
+                                float[] right_back =
+                                {
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                };
+                                outVerts.AddRange(right_back);
+                                continue;
+                            }
+                            if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Cactus)
+                            {
+                                if ((z == 0 && chunknz != null && chunknz.blocks != null && Block.GetBlockOpacity(chunknz.blocks[x, y, 15]) == Block.Opacity.Transparent) || (z != 0 && Block.GetBlockOpacity(blocks[x, y, z - 1]) == Block.Opacity.Transparent))
+                                {
+                                    var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
+                                    float[] _front =
+                                    {
+                                        0f + x,  1f + y, 0.1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  1f + y, 0.1f + z, 1f, 1f, uv, // top right
+                                        1f + x,  0f + y, 0.1f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 0.1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 0.1f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  0f + y, 0.1f + z, 0f, 0f, uv, // bottom left
+                                    };
+                                    outVerts.AddRange(_front);
+                                }
+                                if ((z == 15 && chunkpz != null && chunkpz.blocks != null && Block.GetBlockOpacity(chunkpz.blocks[x, y, 0]) == Block.Opacity.Transparent) || (z != 15 && Block.GetBlockOpacity(blocks[x, y, z + 1]) == Block.Opacity.Transparent))
+                                {
+                                    var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
+                                    float[] _back =
+                                    {
+                                        1f + x,  0f + y, 0.9f + z, 1f, 0f, uv, // bottom right
+                                        1f + x,  1f + y, 0.9f + z, 1f, 1f, uv, // top right
+                                        0f + x,  1f + y, 0.9f + z, 0f, 1f, uv, // top left 
+                                        0f + x,  0f + y, 0.9f + z, 0f, 0f, uv, // bottom left
+                                        1f + x,  0f + y, 0.9f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 0.9f + z, 0f, 1f, uv, // top left 
+                                    };
+                                    outVerts.AddRange(_back);
+                                }
+                                if ((x == 0 && chunknx != null && chunknx.blocks != null && Block.GetBlockOpacity(chunknx.blocks[15, y, z]) == Block.Opacity.Transparent) || (x != 0 && Block.GetBlockOpacity(blocks[x - 1, y, z]) == Block.Opacity.Transparent))
+                                {
+                                    var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
+                                    float[] _left =
+                                    {
+                                        0.1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left
+                                        0.1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                        0.1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0.1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        0.1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0.1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    };
+                                    outVerts.AddRange(_left);
+                                }
+                                if ((x == 15 && chunkpx != null && chunkpx.blocks != null && Block.GetBlockOpacity(chunkpx.blocks[0, y, z]) == Block.Opacity.Transparent) || (x != 15 && Block.GetBlockOpacity(blocks[x + 1, y, z]) == Block.Opacity.Transparent))
+                                {
+                                    var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
+                                    float[] _right =
+                                    {
+                                        0.9f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0.9f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                        0.9f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        0.9f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        0.9f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0.9f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    };
+                                    outVerts.AddRange(_right);
+                                }
+                                if (y == 255 || Block.GetBlockOpacity(blocks[x, y + 1, z]) == Block.Opacity.Transparent)
+                                {
+                                    var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
+                                    float[] _top =
+                                    {
+                                        1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  1f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    };
+                                    outVerts.AddRange(_top);
+                                }
+                                if (y == 0 || Block.GetBlockOpacity(blocks[x, y - 1, z]) == Block.Opacity.Transparent)
+                                {
+                                    var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
+                                    float[] _bottom =
+                                    {
+                                        0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        0f + x,  0f + y, 0f + z, 1f, 1f, uv, // top right
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom 
+                                        0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    };
+                                    outVerts.AddRange(_bottom);
+                                }
+                                continue;
+                            }
+                            if ((z == 0 && chunknz != null && chunknz.blocks != null && Block.GetBlockOpacity(chunknz.blocks[x, y, 15]) == Block.Opacity.Transparent) || (z != 0 && Block.GetBlockOpacity(blocks[x, y, z - 1]) == Block.Opacity.Transparent))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] _front =
@@ -112,7 +270,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_front);
                             }
-                            if ((z == 15 && chunkpz != null && chunkpz.blocks != null && chunkpz.blocks[x, y, 0] == 0) || (z != 15 && blocks[x, y, z + 1] == 0))
+                            if ((z == 15 && chunkpz != null && chunkpz.blocks != null && Block.GetBlockOpacity(chunkpz.blocks[x, y, 0]) == Block.Opacity.Transparent) || (z != 15 && Block.GetBlockOpacity(blocks[x, y, z + 1]) == Block.Opacity.Transparent))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] _back =
@@ -126,7 +284,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_back);
                             }
-                            if ((x == 0 && chunknx != null && chunknx.blocks != null && chunknx.blocks[15, y, z] == 0) || (x != 0 && blocks[x - 1, y, z] == 0))
+                            if ((x == 0 && chunknx != null && chunknx.blocks != null && Block.GetBlockOpacity(chunknx.blocks[15, y, z]) == Block.Opacity.Transparent) || (x != 0 && Block.GetBlockOpacity(blocks[x - 1, y, z]) == Block.Opacity.Transparent))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                 float[] _left =
@@ -140,7 +298,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_left);
                             }
-                            if ((x == 15 && chunkpx != null && chunkpx.blocks != null && chunkpx.blocks[0, y, z] == 0) || (x != 15 && blocks[x + 1, y, z] == 0))
+                            if ((x == 15 && chunkpx != null && chunkpx.blocks != null && Block.GetBlockOpacity(chunkpx.blocks[0, y, z]) == Block.Opacity.Transparent) || (x != 15 && Block.GetBlockOpacity(blocks[x + 1, y, z]) == Block.Opacity.Transparent))
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                 float[] _right =
@@ -154,7 +312,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_right);
                             }
-                            if (y == 255 || blocks[x, y + 1, z] == 0)
+                            if (y == 255 || Block.GetBlockOpacity(blocks[x, y + 1, z]) == Block.Opacity.Transparent)
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                 float[] _top =
@@ -168,7 +326,7 @@ namespace craftinggame.Mechanics
                                 };
                                 outVerts.AddRange(_top);
                             }
-                            if (y == 0 || blocks[x, y - 1, z] == 0)
+                            if (y == 0 || Block.GetBlockOpacity(blocks[x, y - 1, z]) == Block.Opacity.Transparent)
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                 float[] _bottom =

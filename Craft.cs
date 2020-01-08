@@ -30,9 +30,12 @@ namespace craftinggame
         {
             theCraft = this;
             VSync = VSyncMode.Off;
+            WindowState = WindowState.Fullscreen;
             GL.ClearColor(0.01176470588f, 0.59607843137f, 0.68823529411f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             player = new Player(10, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();

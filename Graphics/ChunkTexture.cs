@@ -43,6 +43,7 @@ namespace craftinggame.Graphics
             {
                 using(var image = new Bitmap(files[i]))
                 {
+
                     image.RotateFlip(RotateFlipType.Rotate180FlipX);
 
                     var data = image.LockBits(
