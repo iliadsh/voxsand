@@ -24,7 +24,7 @@ namespace craftinggame
         public ConcurrentQueue<Chunk> meshingQueue = new ConcurrentQueue<Chunk>();
 
         public Craft(int width, int height, string title)
-            : base(width, height, new GraphicsMode(new ColorFormat(8, 8, 8, 8), 24, 24, 4), title) {}
+            : base(width, height, new GraphicsMode(new ColorFormat(8, 8, 8, 8), 24, 8, 4), title) {}
 
         protected override void OnLoad(EventArgs e)
         {

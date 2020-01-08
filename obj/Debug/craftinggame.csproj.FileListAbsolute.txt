@@ -26,3 +26,5 @@ D:\repos\CraftingGame\bin\Debug\OpenTK.dll
 D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_side.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_top.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\sand.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\stone.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\dirt.png

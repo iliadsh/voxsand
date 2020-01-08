@@ -10,7 +10,9 @@ namespace craftinggame.Mechanics
 {
     class Chunk
     {
-        public static OpenSimplexNoise noise = new OpenSimplexNoise();
+        public static Random rand = new Random();
+        public static OpenSimplexNoise noise = new OpenSimplexNoise(rand.Next());
+        public static OpenSimplexNoise biomenoise = new OpenSimplexNoise(rand.Next());
 
         public Chunk((int x, int z) pos)
         {
@@ -25,15 +27,25 @@ namespace craftinggame.Mechanics
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    for (int y = 0; y < 20 * noise.Evaluate((x + position.x * 16) / 50f, (z + position.z * 16) / 50f) + 100; y++)
+                    bool sand = noise.Evaluate((x + position.x * 16) / 50f, (z + position.z * 16) / 50f) > 0.1;
+                    for (int y = 0; y < CalculateNoise(x + position.x * 16, z + position.z * 16); y++)
                     {
                         byte value = 1;
-                        if (y < 90)
+                        if (sand)
                             value = 2;
                         blocks[x, y, z] = value;
                     }
                 }
             }
+        }
+
+        public static int CalculateNoise(int x, int z)
+        {
+            return (int)
+                (60 * Math.Pow(noise.Evaluate(x / 50f, z / 50f), 3) +
+                30 * Math.Pow(noise.Evaluate(x / 25f, z / 25f), 3) +
+                15 * Math.Pow(noise.Evaluate(x / 14f, z / 14f), 3) +
+                100);
         }
 
         public (int x, int z) position;

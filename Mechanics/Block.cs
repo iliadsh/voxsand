@@ -33,6 +33,10 @@ namespace craftinggame.Mechanics
                     }
                 case 2:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\sand.png");
+                case 3:
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dirt.png");
+                case 4:
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\stone.png");
                 default:
                     return 0;
             }

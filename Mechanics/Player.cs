@@ -17,7 +17,7 @@ namespace craftinggame.Mechanics
         public Player(int renderDistance, float aspectRatio)
         {
             this.renderDistance = renderDistance;
-            entity = new Entity(new Vector3(0, (float)Chunk.noise.Evaluate(0, 0) + 102, 1));
+            entity = new Entity(new Vector3(0, Chunk.CalculateNoise(0, 0) + 2, 1));
             camera = new Camera(entity, aspectRatio);
         }
 
