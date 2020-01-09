@@ -42,7 +42,7 @@ namespace craftinggame.Mechanics
                             double delta = Math.Abs(-0.3 - noisenum) * 10;
                             high = (int)((delta) * high + (1 - delta) * CalculateWaterNoise(x + position.x * 16, z + position.z * 16)) + 1;
                         }
-                        if (rand.Next(0, 40) > 38)
+                        if (rand.Next(0, 20) > 18)
                         {
                             blocks[x, high, z] = 5;
                         }

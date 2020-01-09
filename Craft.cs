@@ -16,12 +16,16 @@ namespace craftinggame
     class Craft : GameWindow
     {
         public static Craft theCraft;
+        public static float globalTime = 0;
 
         public ConcurrentDictionary<(int x, int z), Chunk> chunks;
         public Player player;
+        public Skybox skybox;
 
         Thread chunkMeshingThread;
         public ConcurrentQueue<Chunk> meshingQueue = new ConcurrentQueue<Chunk>();
+
+        bool escaped = false;
 
         public Craft(int width, int height, string title)
             : base(width, height, new GraphicsMode(new ColorFormat(8, 8, 8, 8), 24, 8, 4), title) {}
@@ -33,12 +37,14 @@ namespace craftinggame
             //WindowState = WindowState.Fullscreen;
             GL.ClearColor(0.01176470588f, 0.59607843137f, 0.68823529411f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.CullFace);
+            GL.DepthFunc(DepthFunction.Lequal);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             player = new Player(10, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
+            skybox = new Skybox();
             chunkMeshingThread = new Thread(MeshChunks);
             chunkMeshingThread.Start();
 
@@ -82,7 +88,13 @@ namespace craftinggame
 
             if (input.IsKeyDown(Key.Escape))
             {
-                Exit();
+                CursorVisible = true;
+                escaped = true;
+            }
+
+            if (escaped)
+            {
+                return;
             }
 
             const float cameraSpeed = 25.5f;
@@ -130,6 +142,7 @@ namespace craftinggame
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            globalTime += (float)e.Time;
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             ChunkMesh.PreludeRender();
@@ -177,6 +190,9 @@ namespace craftinggame
                 }
             }
 
+            Skybox.PreludeRender();
+            skybox.Render();
+
             Context.SwapBuffers();
 
             base.OnRenderFrame(e);
@@ -184,12 +200,22 @@ namespace craftinggame
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
-            if (Focused) 
+            if (Focused && !escaped) 
             {
                 Mouse.SetPosition(X + Width / 2f, Y + Height / 2f);
             }
 
             base.OnMouseMove(e);
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            if (escaped)
+            {
+                escaped = false;
+                CursorVisible = false;
+            }
+            base.OnMouseDown(e);
         }
 
         protected override void OnResize(EventArgs e)

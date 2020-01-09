@@ -28,6 +28,7 @@ namespace craftinggame.Graphics
         public static void PreludeWaterRender()
         {
             chunkWaterShader.Use();
+            chunkWaterShader.SetFloat("globalTime", Craft.globalTime);
         }
 
         int VAO;
