@@ -24,7 +24,7 @@ namespace craftinggame.Mechanics
             Solid,
             Transparent,
             Grass,
-            Cactus
+            Liquid,
         }
 
         public enum Opacity
@@ -43,9 +43,10 @@ namespace craftinggame.Mechanics
                 case 2:
                 case 3:
                 case 4:
-                    return Type.Solid;
                 case 6:
-                    return Type.Cactus;
+                    return Type.Solid;
+                case 8:
+                    return Type.Liquid;
                 case 5:
                 case 7:
                     return Type.Grass;
@@ -64,10 +65,11 @@ namespace craftinggame.Mechanics
                 case 2:
                 case 3:
                 case 4:
+                case 6:
                     return Opacity.Solid;
                 case 5:
-                case 6:
                 case 7:
+                case 8:
                     return Opacity.Transparent;
                 default:
                     return Opacity.Transparent;
@@ -95,15 +97,11 @@ namespace craftinggame.Mechanics
                 case 5:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass.png");
                 case 6:
-                    switch (face)
-                    {
-                        case Face.Top:
-                            return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\cactus_top.png");
-                        default:
-                            return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\cactus_side.png");
-                    }
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\cactus.png");
                 case 7:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dead_bush.png");
+                case 8:
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\water.png");
                 default:
                     return 0;
             }

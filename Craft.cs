@@ -30,10 +30,10 @@ namespace craftinggame
         {
             theCraft = this;
             VSync = VSyncMode.Off;
-            WindowState = WindowState.Fullscreen;
+            //WindowState = WindowState.Fullscreen;
             GL.ClearColor(0.01176470588f, 0.59607843137f, 0.68823529411f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
+            //GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
@@ -85,7 +85,7 @@ namespace craftinggame
                 Exit();
             }
 
-            const float cameraSpeed = 10.5f;
+            const float cameraSpeed = 15.5f;
             const float sensitivity = 0.002f;
 
             if (input.IsKeyDown(Key.W))
@@ -139,13 +139,21 @@ namespace craftinggame
                 {
                     if (chunk.Value.mesh != null)
                         chunk.Value.KillMesh();
-                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts);
+
+                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts, 0);
                     chunk.Value.verts = null;
+
+                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts, 1);
+                    chunk.Value.waterVerts = null;
+
                     chunk.Value.needsRemesh = false;
                 }
                 if (chunk.Value.mesh != null)
                 {
-                    chunk.Value.mesh.Render(chunk.Key);
+                    ChunkMesh.PreludeNormalRender();
+                    chunk.Value.mesh.Render(chunk.Key, 0);
+                    ChunkMesh.PreludeWaterRender();
+                    chunk.Value.waterMesh.Render(chunk.Key, 1);
                 }
             }
 

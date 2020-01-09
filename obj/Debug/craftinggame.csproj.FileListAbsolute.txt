@@ -38,3 +38,13 @@ C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textur
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\cactus_side.png
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\cactus_top.png
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\dead_bush.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\birch_leaves.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\cactus_side.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\cactus_top.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\dead_bush.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\grass.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\oak_log.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\cactus.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\water.png
+D:\repos\CraftingGame\bin\Debug\Resources\chunk_water_shader.frag
+D:\repos\CraftingGame\bin\Debug\Resources\chunk_water_shader.vert

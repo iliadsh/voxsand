@@ -27,29 +27,71 @@ namespace craftinggame.Mechanics
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    bool sand = noise.Evaluate((x + position.x * 16) / 200f, (z + position.z * 16) / 200f) > 0.1;
-                    int high = !sand ? CalculateForestNoise(x + position.x * 16, z + position.z * 16) : CalculateDesertNoise(x + position.x * 16, z + position.z * 16);
-                    high = (int)(high * (Math.Pow(noise.Evaluate((x + position.x * 16) / 200f, (z + position.z * 16) / 200f), 3) + 1));
-                    if (rand.Next(0, 40) > 38)
+                    int high;
+                    double noisenum = noise.Evaluate((x + position.x * 16) / 1000f, (z + position.z * 16) / 1000f);
+                    if (noisenum < 0.4 && noisenum > -0.3)
                     {
-                        blocks[x, high, z] = !sand ? (byte)5 : (byte)7;
-                    }
-                    else if (sand && rand.Next(0, 1000) > 998)
-                    {
-                        blocks[x, high, z] = 6;
-                        blocks[x, high + 1, z] = 6;
-                        blocks[x, high + 2, z] = 6;
-                    }
-                    for (int y = 0; y < high; y++)
-                    {
-                        byte value = 1;
-                        if (sand)
-                            value = 2;
-                        else if (y < high - 1)
+                        high = CalculateForestNoise(x + position.x * 16, z + position.z * 16);
+                        if (noisenum > 0.3)
                         {
-                            value = 3;
+                            double delta = (0.4 - noisenum) * 5;
+                            high = (int)((0.5 + delta) * high +  (0.5 - delta) * CalculateDesertNoise(x + position.x * 16, z + position.z * 16));
                         }
-                        blocks[x, y, z] = value;
+                        if (noisenum < -0.2)
+                        {
+                            double delta = Math.Abs(-0.3 - noisenum) * 10;
+                            high = (int)((delta) * high + (1 - delta) * CalculateWaterNoise(x + position.x * 16, z + position.z * 16)) + 1;
+                        }
+                        if (rand.Next(0, 40) > 38)
+                        {
+                            blocks[x, high, z] = 5;
+                        }
+                        for (int y = 0; y < high; y++)
+                        {
+                            byte value = 1;
+                            if (y < high - 1)
+                            {
+                                value = 3;
+                            }
+                            blocks[x, y, z] = value;
+                        }
+                    }
+                    else if (noisenum < -0.3 || noisenum > 0.8)
+                    {
+                        high = CalculateWaterNoise(x + position.x * 16, z + position.z * 16);
+                        for (int y = 0; y < high; y++)
+                        {
+                            byte value = 8;
+                            if (y < high - 10)
+                            {
+                                value = 3;
+                            }
+                            blocks[x, y, z] = value;
+                        }
+                    }
+                    else
+                    {
+                        high = CalculateDesertNoise(x + position.x * 16, z + position.z * 16);
+                        if (noisenum < 0.5)
+                        {
+                            double delta = (noisenum - 0.4) * 5;
+                            high = (int)((0.5 + delta) * high + (0.5 - delta) * CalculateForestNoise(x + position.x * 16, z + position.z * 16));
+                        }
+                        if (rand.Next(0, 80) > 78)
+                        {
+                            blocks[x, high, z] = 7;
+                        }
+                        else if (rand.Next(0, 1000) > 998)
+                        {
+                            blocks[x, high, z] = 6;
+                            blocks[x, high + 1, z] = 6;
+                            blocks[x, high + 2, z] = 6;
+                        }
+                        for (int y = 0; y < high; y++)
+                        {
+                            byte value = 2;
+                            blocks[x, y, z] = value;
+                        }
                     }
                 }
             }
@@ -69,13 +111,21 @@ namespace craftinggame.Mechanics
                 (30 * Math.Pow(noise.Evaluate(x / 100f, z / 100f), 3) +
                 100);
         }
+        public static int CalculateWaterNoise(int x, int z)
+        {
+            return (int)
+                (//30 * Math.Pow(noise.Evaluate(x / 150f, z / 150f), 3) +
+                100);
+        }
 
         public (int x, int z) position;
         public ChunkMesh mesh = null;
+        public ChunkMesh waterMesh = null;
         public bool needsRemesh = false;
 
         public byte[,,] blocks = null;
-        public float[] verts;
+        public float[] verts = null;
+        public float[] waterVerts = null;
 
         public static (int x, int z) PosToChunkPos(float x, float z)
         {
@@ -98,6 +148,9 @@ namespace craftinggame.Mechanics
             if (mesh == null) return;
             mesh.Cleanup();
             mesh = null;
+            if (waterMesh == null) return;
+            waterMesh.Cleanup();
+            waterMesh = null;
         }
 
         public void GenVerts()
@@ -112,6 +165,7 @@ namespace craftinggame.Mechanics
             Chunk chunknz = Craft.theCraft.chunks.ContainsKey(posnz) ? Craft.theCraft.chunks[posnz] : null;
 
             List<float> outVerts = new List<float>();
+            List<float> outWater = new List<float>();
             for (int x = 0; x < 16; x++)
             {
                 for (int y = 0; y < 256; y++)
@@ -168,65 +222,65 @@ namespace craftinggame.Mechanics
                                 outVerts.AddRange(right_back);
                                 continue;
                             }
-                            if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Cactus)
+                            if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Liquid)
                             {
-                                if ((z == 0 && chunknz != null && chunknz.blocks != null && Block.GetBlockOpacity(chunknz.blocks[x, y, 15]) == Block.Opacity.Transparent) || (z != 0 && Block.GetBlockOpacity(blocks[x, y, z - 1]) == Block.Opacity.Transparent))
+                                if ((z == 0 && chunknz != null && chunknz.blocks != null && Block.GetBlockOpacity(chunknz.blocks[x, y, 15]) == Block.Opacity.Transparent && Block.GetBlockType(chunknz.blocks[x, y, 15]) != Block.Type.Liquid) || (z != 0 && Block.GetBlockOpacity(blocks[x, y, z - 1]) == Block.Opacity.Transparent && Block.GetBlockType(blocks[x, y, z - 1]) != Block.Type.Liquid))
                                 {
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                     float[] _front =
                                     {
-                                        0f + x,  1f + y, 0.1f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  1f + y, 0.1f + z, 1f, 1f, uv, // top right
-                                        1f + x,  0f + y, 0.1f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 0.1f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  0f + y, 0.1f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  0f + y, 0.1f + z, 0f, 0f, uv, // bottom left
+                                        0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  0f + y, 0f + z, 0f, 0f, uv, // bottom left
                                     };
-                                    outVerts.AddRange(_front);
+                                    outWater.AddRange(_front);
                                 }
-                                if ((z == 15 && chunkpz != null && chunkpz.blocks != null && Block.GetBlockOpacity(chunkpz.blocks[x, y, 0]) == Block.Opacity.Transparent) || (z != 15 && Block.GetBlockOpacity(blocks[x, y, z + 1]) == Block.Opacity.Transparent))
+                                if ((z == 15 && chunkpz != null && chunkpz.blocks != null && Block.GetBlockOpacity(chunkpz.blocks[x, y, 0]) == Block.Opacity.Transparent && Block.GetBlockType(chunkpz.blocks[x, y, 0]) != Block.Type.Liquid) || (z != 15 && Block.GetBlockOpacity(blocks[x, y, z + 1]) == Block.Opacity.Transparent && Block.GetBlockType(blocks[x, y, z + 1]) != Block.Type.Liquid))
                                 {
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                     float[] _back =
                                     {
-                                        1f + x,  0f + y, 0.9f + z, 1f, 0f, uv, // bottom right
-                                        1f + x,  1f + y, 0.9f + z, 1f, 1f, uv, // top right
-                                        0f + x,  1f + y, 0.9f + z, 0f, 1f, uv, // top left 
-                                        0f + x,  0f + y, 0.9f + z, 0f, 0f, uv, // bottom left
-                                        1f + x,  0f + y, 0.9f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 0.9f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
+                                        1f + x,  1f + y, 1f + z, 1f, 1f, uv, // top right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
                                     };
-                                    outVerts.AddRange(_back);
+                                    outWater.AddRange(_back);
                                 }
-                                if ((x == 0 && chunknx != null && chunknx.blocks != null && Block.GetBlockOpacity(chunknx.blocks[15, y, z]) == Block.Opacity.Transparent) || (x != 0 && Block.GetBlockOpacity(blocks[x - 1, y, z]) == Block.Opacity.Transparent))
+                                if ((x == 0 && chunknx != null && chunknx.blocks != null && Block.GetBlockOpacity(chunknx.blocks[15, y, z]) == Block.Opacity.Transparent && Block.GetBlockType(chunknx.blocks[15, y, z]) != Block.Type.Liquid) || (x != 0 && Block.GetBlockOpacity(blocks[x - 1, y, z]) == Block.Opacity.Transparent && Block.GetBlockType(blocks[x - 1, y, z]) != Block.Type.Liquid))
                                 {
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                     float[] _left =
                                     {
-                                        0.1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left
-                                        0.1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                        0.1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0.1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        0.1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0.1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left
+                                        0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                        0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
                                     };
-                                    outVerts.AddRange(_left);
+                                    outWater.AddRange(_left);
                                 }
-                                if ((x == 15 && chunkpx != null && chunkpx.blocks != null && Block.GetBlockOpacity(chunkpx.blocks[0, y, z]) == Block.Opacity.Transparent) || (x != 15 && Block.GetBlockOpacity(blocks[x + 1, y, z]) == Block.Opacity.Transparent))
+                                if ((x == 15 && chunkpx != null && chunkpx.blocks != null && Block.GetBlockOpacity(chunkpx.blocks[0, y, z]) == Block.Opacity.Transparent && Block.GetBlockType(chunkpx.blocks[0, y, z]) != Block.Type.Liquid) || (x != 15 && Block.GetBlockOpacity(blocks[x + 1, y, z]) == Block.Opacity.Transparent && Block.GetBlockType(blocks[x + 1, y, z]) != Block.Type.Liquid))
                                 {
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                     float[] _right =
                                     {
-                                        0.9f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0.9f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                        0.9f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        0.9f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                        0.9f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0.9f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
+                                        1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
+                                        1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
                                     };
-                                    outVerts.AddRange(_right);
+                                    outWater.AddRange(_right);
                                 }
-                                if (y == 255 || Block.GetBlockOpacity(blocks[x, y + 1, z]) == Block.Opacity.Transparent)
+                                if (y == 255 || Block.GetBlockOpacity(blocks[x, y + 1, z]) == Block.Opacity.Transparent && Block.GetBlockType(blocks[x, y + 1, z]) != Block.Type.Liquid)
                                 {
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                     float[] _top =
@@ -238,9 +292,9 @@ namespace craftinggame.Mechanics
                                         1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
                                         0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
                                     };
-                                    outVerts.AddRange(_top);
+                                    outWater.AddRange(_top);
                                 }
-                                if (y == 0 || Block.GetBlockOpacity(blocks[x, y - 1, z]) == Block.Opacity.Transparent)
+                                if (y == 0 || Block.GetBlockOpacity(blocks[x, y - 1, z]) == Block.Opacity.Transparent && Block.GetBlockType(blocks[x, y - 1, z]) != Block.Type.Liquid)
                                 {
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                     float[] _bottom =
@@ -252,7 +306,7 @@ namespace craftinggame.Mechanics
                                         1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
                                         1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
                                     };
-                                    outVerts.AddRange(_bottom);
+                                    outWater.AddRange(_bottom);
                                 }
                                 continue;
                             }
@@ -346,6 +400,7 @@ namespace craftinggame.Mechanics
             }
             
             verts = outVerts.ToArray();
+            waterVerts = outWater.ToArray();
             needsRemesh = true;
         }
     }
