@@ -28,7 +28,7 @@ namespace craftinggame.Mechanics
                 for (int z = 0; z < 16; z++)
                 {
                     int high;
-                    double noisenum = noise.Evaluate((x + position.x * 16) / 1000f, (z + position.z * 16) / 1000f);
+                    double noisenum = noise.Evaluate((x + position.x * 16) / 100f, (z + position.z * 16) / 100f);
                     if (noisenum < 0.4 && noisenum > -0.3)
                     {
                         high = CalculateForestNoise(x + position.x * 16, z + position.z * 16);

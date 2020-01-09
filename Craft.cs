@@ -85,7 +85,7 @@ namespace craftinggame
                 Exit();
             }
 
-            const float cameraSpeed = 15.5f;
+            const float cameraSpeed = 25.5f;
             const float sensitivity = 0.002f;
 
             if (input.IsKeyDown(Key.W))
@@ -152,6 +152,26 @@ namespace craftinggame
                 {
                     ChunkMesh.PreludeNormalRender();
                     chunk.Value.mesh.Render(chunk.Key, 0);
+                }
+            }
+
+            foreach (KeyValuePair<(int x, int z), Chunk> chunk in chunks)
+            {
+                if (chunk.Value.needsRemesh)
+                {
+                    if (chunk.Value.mesh != null)
+                        chunk.Value.KillMesh();
+
+                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts, 0);
+                    chunk.Value.verts = null;
+
+                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts, 1);
+                    chunk.Value.waterVerts = null;
+
+                    chunk.Value.needsRemesh = false;
+                }
+                if (chunk.Value.waterMesh != null)
+                {
                     ChunkMesh.PreludeWaterRender();
                     chunk.Value.waterMesh.Render(chunk.Key, 1);
                 }
