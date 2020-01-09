@@ -14,9 +14,16 @@ namespace craftinggame.Mechanics
         public static OpenSimplexNoise noise = new OpenSimplexNoise(rand.Next());
         public static OpenSimplexNoise biomenoise = new OpenSimplexNoise(rand.Next());
 
+        public bool decorated = false;
+
         public Chunk((int x, int z) pos)
         {
             position = pos;
+        }
+
+        public void DecorateChunk()
+        {
+            decorated = true;
         }
 
         public void GenChunk()
@@ -28,7 +35,7 @@ namespace craftinggame.Mechanics
                 for (int z = 0; z < 16; z++)
                 {
                     int high;
-                    double noisenum = noise.Evaluate((x + position.x * 16) / 1000f, (z + position.z * 16) / 1000f);
+                    double noisenum = noise.Evaluate((x + position.x * 16) / 100f, (z + position.z * 16) / 100f);
                     if (noisenum < 0.4 && noisenum > -0.3)
                     {
                         high = CalculateForestNoise(x + position.x * 16, z + position.z * 16);
@@ -46,6 +53,30 @@ namespace craftinggame.Mechanics
                         {
                             blocks[x, high, z] = 5;
                         }
+                        else if (rand.Next(0, 80) > 78 && x > 3 && x < 13 && z > 3 && z < 13)
+                        {
+                            blocks[x, high, z] = 9;
+                            blocks[x, high + 1, z] = 9;
+                            blocks[x, high + 2, z] = 9;
+                            blocks[x, high + 3, z] = 9;
+                            blocks[x + 1, high + 3, z] = 9;
+                            blocks[x + 1, high + 4, z] = 9;
+                            blocks[x + 1, high + 5, z] = 9;
+
+                            blocks[x + 1, high + 6, z] = 10;
+                            blocks[x + 2, high + 5, z] = 10;
+                            blocks[x, high + 5, z] = 10;
+                            blocks[x + 1, high + 5, z + 1] = 10;
+                            blocks[x + 1, high + 5, z - 1] = 10;
+                            blocks[x + 2, high + 4, z] = 10;
+                            blocks[x, high + 4, z] = 10;
+                            blocks[x + 1, high + 4, z + 1] = 10;
+                            blocks[x + 1, high + 4, z - 1] = 10;
+                            blocks[x + 3, high + 4, z] = 10;
+                            blocks[x - 1, high + 4, z] = 10;
+                            blocks[x + 1, high + 4, z + 2] = 10;
+                            blocks[x + 1, high + 4, z - 2] = 10;
+                        }
                         for (int y = 0; y < high; y++)
                         {
                             byte value = 1;
@@ -62,7 +93,13 @@ namespace craftinggame.Mechanics
                         for (int y = 0; y < high; y++)
                         {
                             byte value = 8;
-                            if (y < high - 10)
+                            int low = CalculateWaterFloorNoise(x + position.x & 16, z + position.z * 16);
+                            if (noisenum > -0.4)
+                            {
+                                double delta = Math.Abs(noisenum + 0.3) * 10;
+                                low = (int)((delta) * low + (1 - delta) * CalculateForestNoise(x + position.x * 16, z + position.z * 16)) + 1;
+                            }
+                            if (y < low)
                             {
                                 if (rand.Next(0, 2) > 0)
                                 {
@@ -122,6 +159,13 @@ namespace craftinggame.Mechanics
             return (int)
                 (//30 * Math.Pow(noise.Evaluate(x / 150f, z / 150f), 3) +
                 100);
+        }
+
+        public static int CalculateWaterFloorNoise(int x, int z)
+        {
+            return (int)
+                (40 * Math.Pow(noise.Evaluate(x / 100f, z / 100f), 3) +
+                80);
         }
 
         public (int x, int z) position;

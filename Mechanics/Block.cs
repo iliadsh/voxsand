@@ -44,11 +44,13 @@ namespace craftinggame.Mechanics
                 case 3:
                 case 4:
                 case 6:
+                case 9:
                     return Type.Solid;
                 case 8:
                     return Type.Liquid;
                 case 5:
                 case 7:
+                case 10:
                     return Type.Grass;
                 default:
                     return Type.Transparent;
@@ -66,10 +68,12 @@ namespace craftinggame.Mechanics
                 case 3:
                 case 4:
                 case 6:
+                case 9:
                     return Opacity.Solid;
                 case 5:
                 case 7:
                 case 8:
+                case 10:
                     return Opacity.Transparent;
                 default:
                     return Opacity.Transparent;
@@ -102,6 +106,10 @@ namespace craftinggame.Mechanics
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dead_bush.png");
                 case 8:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\water_still.png");
+                case 9:
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\oak_log.png");
+                case 10:
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\birch_leaves.png");
                 default:
                     return 0;
             }
