@@ -165,7 +165,7 @@
     <Content Include="Resources\textures\stone.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\textures\water.png">
+    <Content Include="Resources\textures\water_still.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -101,7 +101,7 @@ namespace craftinggame.Mechanics
                 case 7:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dead_bush.png");
                 case 8:
-                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\water.png");
+                    return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\water_still.png");
                 default:
                     return 0;
             }
