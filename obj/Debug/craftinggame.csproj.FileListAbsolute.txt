@@ -45,7 +45,6 @@ D:\repos\CraftingGame\bin\Debug\Resources\textures\dead_bush.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\grass.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\oak_log.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\cactus.png
-D:\repos\CraftingGame\bin\Debug\Resources\textures\water.png
 D:\repos\CraftingGame\bin\Debug\Resources\chunk_water_shader.frag
 D:\repos\CraftingGame\bin\Debug\Resources\chunk_water_shader.vert
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\cactus.png
@@ -60,3 +59,12 @@ C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\skybox
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\skybox_shader.vert
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\skybox\top.png
 C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\Resources\textures\water_still.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\back.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\bottom.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\front.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\left.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\right.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\top.png
+D:\repos\CraftingGame\bin\Debug\Resources\textures\water_still.png
+D:\repos\CraftingGame\bin\Debug\Resources\skybox_shader.frag
+D:\repos\CraftingGame\bin\Debug\Resources\skybox_shader.vert

@@ -24,6 +24,7 @@ namespace craftinggame
 
         Thread chunkMeshingThread;
         public ConcurrentQueue<Chunk> meshingQueue = new ConcurrentQueue<Chunk>();
+        public Vector3 sun = new Vector3();
 
         bool escaped = false;
 

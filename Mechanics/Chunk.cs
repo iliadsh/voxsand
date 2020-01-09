@@ -13,6 +13,7 @@ namespace craftinggame.Mechanics
         public static Random rand = new Random();
         public static OpenSimplexNoise noise = new OpenSimplexNoise(rand.Next());
         public static OpenSimplexNoise biomenoise = new OpenSimplexNoise(rand.Next());
+        public static OpenSimplexNoise oceanfloornoise = new OpenSimplexNoise(rand.Next());
 
         public bool decorated = false;
 
@@ -35,7 +36,7 @@ namespace craftinggame.Mechanics
                 for (int z = 0; z < 16; z++)
                 {
                     int high;
-                    double noisenum = noise.Evaluate((x + position.x * 16) / 100f, (z + position.z * 16) / 100f);
+                    double noisenum = noise.Evaluate((x + position.x * 16) / 300f, (z + position.z * 16) / 300f);
                     if (noisenum < 0.4 && noisenum > -0.3)
                     {
                         high = CalculateForestNoise(x + position.x * 16, z + position.z * 16);
@@ -53,7 +54,7 @@ namespace craftinggame.Mechanics
                         {
                             blocks[x, high, z] = 5;
                         }
-                        else if (rand.Next(0, 80) > 78 && x > 3 && x < 13 && z > 3 && z < 13)
+                        else if (rand.Next(0, 40) > 38 && x > 3 && x < 13 && z > 3 && z < 13)
                         {
                             blocks[x, high, z] = 9;
                             blocks[x, high + 1, z] = 9;
@@ -90,18 +91,20 @@ namespace craftinggame.Mechanics
                     else if (noisenum < -0.3 || noisenum > 0.8)
                     {
                         high = CalculateWaterNoise(x + position.x * 16, z + position.z * 16);
+                        bool blocktype = CalculateWaterFloorBlockNoise(x + position.x * 16, z + position.z * 16);
+                        int low = CalculateWaterFloorNoise(x + position.x * 16, z + position.z * 16);
+                        if (noisenum > -0.4 && noisenum < -0.3)
+                        {
+                            double delta = Math.Abs(noisenum + 0.3) * 10;
+                            low = (int)((delta) * low + (1 - delta) * CalculateForestNoise(x + position.x * 16, z + position.z * 16));
+                        }
                         for (int y = 0; y < high; y++)
                         {
                             byte value = 8;
-                            int low = CalculateWaterFloorNoise(x + position.x & 16, z + position.z * 16);
-                            if (noisenum > -0.4)
-                            {
-                                double delta = Math.Abs(noisenum + 0.3) * 10;
-                                low = (int)((delta) * low + (1 - delta) * CalculateForestNoise(x + position.x * 16, z + position.z * 16)) + 1;
-                            }
+                            
                             if (y < low)
                             {
-                                if (rand.Next(0, 2) > 0)
+                                if (blocktype)
                                 {
                                     value = 4;
                                 } else
@@ -164,8 +167,12 @@ namespace craftinggame.Mechanics
         public static int CalculateWaterFloorNoise(int x, int z)
         {
             return (int)
-                (40 * Math.Pow(noise.Evaluate(x / 100f, z / 100f), 3) +
+                (30 * Math.Pow(noise.Evaluate(x / 100f, z / 100f), 3) +
                 80);
+        }
+        public static bool CalculateWaterFloorBlockNoise(int x, int z)
+        {
+            return oceanfloornoise.Evaluate(x / 50f, z / 50f) > 0;
         }
 
         public (int x, int z) position;
@@ -229,45 +236,46 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] left_front =
                                 {
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    //Position               UV      Layer Normal
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0, 1f, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, 1f, 0, 1f, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0, 1f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0, 1f, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0, 1f, // bottom right
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, 1f, 0, 1f, // bottom left
                                 };
                                 outVerts.AddRange(left_front);
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] left_back =
                                 {
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0, -1f, // bottom right
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, -1f, 0, -1f, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0, -1f, // top left 
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, -1f, 0, -1f, // bottom left
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0, -1f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0, -1f, // top left 
                                 };
                                 outVerts.AddRange(left_back);
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] right_front =
                                 {
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0, 1f, // top left 
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, -1f, 0, 1f, // top right
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0, 1f, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0, 1f, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0, 1f, // bottom right
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, -1f, 0, 1f, // bottom left
                                 };
                                 outVerts.AddRange(right_front);
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] right_back =
                                 {
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0, -1f, // bottom right
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, 1f, 0, -1f, // top right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0, -1f, // top left 
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, 1f, 0, -1f, // bottom left
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0, -1f, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0, -1f, // top left 
                                 };
                                 outVerts.AddRange(right_back);
                                 continue;
@@ -279,12 +287,12 @@ namespace craftinggame.Mechanics
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                     float[] _front =
                                     {
-                                        0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  0f + y, 0f + z, 0f, 0f, uv, // bottom left
+                                        0f + x,  1f + y, 0f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                        1f + x,  1f + y, 0f + z, 1f, 1f, uv, 0f, 0f, -1f, // top right
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                        0f + x,  1f + y, 0f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                        0f + x,  0f + y, 0f + z, 0f, 0f, uv, 0f, 0f, -1f, // bottom left
                                     };
                                     outWater.AddRange(_front);
                                 }
@@ -293,12 +301,12 @@ namespace craftinggame.Mechanics
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                     float[] _back =
                                     {
-                                        1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
-                                        1f + x,  1f + y, 1f + z, 1f, 1f, uv, // top right
-                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                        1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 1f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                        1f + x,  1f + y, 1f + z, 1f, 1f, uv, 0f, 0f, 1f, // top right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
+                                        0f + x,  0f + y, 1f + z, 0f, 0f, uv, 0f, 0f, 1f, // bottom left
+                                        1f + x,  0f + y, 1f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
                                     };
                                     outWater.AddRange(_back);
                                 }
@@ -307,12 +315,12 @@ namespace craftinggame.Mechanics
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                     float[] _left =
                                     {
-                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left
-                                        0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                        0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left
+                                        0f + x,  1f + y, 0f + z, 1f, 1f, uv, -1f, 0f, 0f, // top right
+                                        0f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left 
+                                        0f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                        0f + x,  0f + y, 1f + z, 0f, 0f, uv, -1f, 0f, 0f, // bottom left
                                     };
                                     outWater.AddRange(_left);
                                 }
@@ -321,12 +329,12 @@ namespace craftinggame.Mechanics
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                     float[] _right =
                                     {
-                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                        1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                        1f + x,  1f + y, 0f + z, 1f, 1f, uv, 1f, 0f, 0f, // top right
+                                        1f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
+                                        1f + x,  0f + y, 1f + z, 0f, 0f, uv, 1f, 0f, 0f, // bottom left
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                        1f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
                                     };
                                     outWater.AddRange(_right);
                                 }
@@ -335,12 +343,12 @@ namespace craftinggame.Mechanics
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                     float[] _top =
                                     {
-                                        1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  1f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                        1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                        1f + x,  1f + y, 0f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                        0f + x,  1f + y, 0f + z, 1f, 1f, uv, 0f, 1f, 0f, // top right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
+                                        1f + x,  1f + y, 1f + z, 0f, 0f, uv, 0f, 1f, 0f, // bottom left
+                                        1f + x,  1f + y, 0f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                        0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
                                     };
                                     outWater.AddRange(_top);
                                 }
@@ -349,12 +357,12 @@ namespace craftinggame.Mechanics
                                     var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                     float[] _bottom =
                                     {
-                                        0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        0f + x,  0f + y, 0f + z, 1f, 1f, uv, // top right
-                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom 
-                                        0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
-                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                        1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                        0f + x,  0f + y, 1f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                        0f + x,  0f + y, 0f + z, 1f, 1f, uv, 0f, -1f, 0f, // top right
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom 
+                                        0f + x,  0f + y, 1f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                        1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom right
+                                        1f + x,  0f + y, 1f + z, 0f, 0f, uv, 0f, -1f, 0f, // bottom left
                                     };
                                     outWater.AddRange(_bottom);
                                 }
@@ -365,12 +373,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] _front =
                                 {
-                                    0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 0f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  0f + y, 0f + z, 0f, 0f, uv, // bottom left
+                                    0f + x,  1f + y, 0f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, 0f, 0f, -1f, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                    0f + x,  1f + y, 0f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                    0f + x,  0f + y, 0f + z, 0f, 0f, uv, 0f, 0f, -1f, // bottom left
                                 };
                                 outVerts.AddRange(_front);
                             }
@@ -379,12 +387,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] _back =
                                 {
-                                    1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  1f + y, 1f + z, 1f, 1f, uv, // top right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                    1f + x,  0f + y, 1f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 1f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                    1f + x,  1f + y, 1f + z, 1f, 1f, uv, 0f, 0f, 1f, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, 0f, 0f, 1f, // bottom left
+                                    1f + x,  0f + y, 1f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
                                 };
                                 outVerts.AddRange(_back);
                             }
@@ -393,12 +401,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                 float[] _left =
                                 {
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left
-                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, -1f, 0f, 0f, // top right
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                    0f + x,  0f + y, 1f + z, 0f, 0f, uv, -1f, 0f, 0f, // bottom left
                                 };
                                 outVerts.AddRange(_left);
                             }
@@ -407,12 +415,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                 float[] _right =
                                 {
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                    1f + x,  1f + y, 0f + z, 1f, 1f, uv, 1f, 0f, 0f, // top right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, 1f, 0f, 0f, // bottom left
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                    1f + x,  1f + y, 1f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
                                 };
                                 outVerts.AddRange(_right);
                             }
@@ -421,12 +429,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                 float[] _top =
                                 {
-                                    1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, // top right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  1f + y, 1f + z, 0f, 0f, uv, // bottom left
-                                    1f + x,  1f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, // top left 
+                                    1f + x,  1f + y, 0f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 0f + z, 1f, 1f, uv, 0f, 1f, 0f, // top right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
+                                    1f + x,  1f + y, 1f + z, 0f, 0f, uv, 0f, 1f, 0f, // bottom left
+                                    1f + x,  1f + y, 0f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                    0f + x,  1f + y, 1f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
                                 };
                                 outVerts.AddRange(_top);
                             }
@@ -435,12 +443,12 @@ namespace craftinggame.Mechanics
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                 float[] _bottom =
                                 {
-                                    0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    0f + x,  0f + y, 0f + z, 1f, 1f, uv, // top right
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom 
-                                    0f + x,  0f + y, 1f + z, 0f, 1f, uv, // top left 
-                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, // bottom right
-                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, // bottom left
+                                    0f + x,  0f + y, 1f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                    0f + x,  0f + y, 0f + z, 1f, 1f, uv, 0f, -1f, 0f, // top right
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom 
+                                    0f + x,  0f + y, 1f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                    1f + x,  0f + y, 0f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom right
+                                    1f + x,  0f + y, 1f + z, 0f, 0f, uv, 0f, -1f, 0f, // bottom left
                                 };
                                 outVerts.AddRange(_bottom);
                             }

@@ -45,18 +45,22 @@ namespace craftinggame.Graphics
 
             int vertexLocation = usedShader.GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 0);
 
 
             int texCoordLocation = usedShader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 9 * sizeof(float), 3 * sizeof(float));
 
             int texLayerLocation = usedShader.GetAttribLocation("aLayer");
             GL.EnableVertexAttribArray(texLayerLocation);
-            GL.VertexAttribPointer(texLayerLocation, 1, VertexAttribPointerType.Float, false, 6 * sizeof(float), 5 * sizeof(float));
+            GL.VertexAttribPointer(texLayerLocation, 1, VertexAttribPointerType.Float, false, 9 * sizeof(float), 5 * sizeof(float));
 
-            vertAmount = verts.Length / 6;
+            int normalLocation = usedShader.GetAttribLocation("aNormal");
+            GL.EnableVertexAttribArray(normalLocation);
+            GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 6 * sizeof(float));
+
+            vertAmount = verts.Length / 9;
         }
 
         public void Render((int x, int z) pos, byte shader)
