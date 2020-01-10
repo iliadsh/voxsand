@@ -68,3 +68,4 @@ D:\repos\CraftingGame\bin\Debug\Resources\textures\skybox\top.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\water_still.png
 D:\repos\CraftingGame\bin\Debug\Resources\skybox_shader.frag
 D:\repos\CraftingGame\bin\Debug\Resources\skybox_shader.vert
+C:\Users\abigp\source\repos\craftinggame\craftinggame\bin\Debug\OpenTK.dll

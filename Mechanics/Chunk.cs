@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using craftinggame.Graphics;
+using OpenTK;
 
 namespace craftinggame.Mechanics
 {
@@ -50,7 +51,7 @@ namespace craftinggame.Mechanics
                             double delta = Math.Abs(-0.3 - noisenum) * 10;
                             high = (int)((delta) * high + (1 - delta) * CalculateWaterNoise(x + position.x * 16, z + position.z * 16)) + 1;
                         }
-                        if (rand.Next(0, 20) > 18)
+                        if (rand.Next(0, 10) > 8)
                         {
                             blocks[x, high, z] = Block.GRASS;
                         }
@@ -243,80 +244,157 @@ namespace craftinggame.Mechanics
                         {
                             if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Leaves)
                             {
+                                Matrix4 rotation = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rand.Next(0, 360)));
+                                rotation *= Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rand.Next(0, 360)));
+                                rotation *= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(rand.Next(0, 360)));
+
+                                Vector4 pos1 = new Vector4(-.25f - 0.5f, 1.25f - 0.5f, 0, 1f);
+                                pos1 *= rotation;
+                                Vector4 pos2 = new Vector4(1.25f - 0.5f, 1.25f - 0.5f, 0, 1f);
+                                pos2 *= rotation;
+                                Vector4 pos3 = new Vector4(1.25f - 0.5f, -.25f - 0.5f, 0, 1f);
+                                pos3 *= rotation;
+                                Vector4 pos4 = new Vector4(-.25f - 0.5f, 1.25f - 0.5f, 0, 1f);
+                                pos4 *= rotation;
+                                Vector4 pos5 = new Vector4(1.25f - 0.5f, -.25f - 0.5f, 0, 1f);
+                                pos5 *= rotation;
+                                Vector4 pos6 = new Vector4(-.25f - 0.5f, -.25f - 0.5f, 0, 1f);
+                                pos6 *= rotation;
+
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
                                 float[] _front =
                                 {
-                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
-                                    1.25f + x,  1.25f + y, 0.5f + z, 1f, 1f, uv, 0f, 0f, -1f, // top right
-                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
-                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
-                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
-                                    -.25f + x,  -.25f + y, 0.5f + z, 0f, 0f, uv, 0f, 0f, -1f, // bottom left
+                                    pos1.X + 0.5f + x, pos1.Y + 0.5f + y, pos1.Z + 0.5f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                    pos2.X + 0.5f + x, pos2.Y + 0.5f + y, pos2.Z + 0.5f + z, 1f, 1f, uv, 0f, 0f, -1f, // top right
+                                    pos3.X + 0.5f + x, pos3.Y + 0.5f + y, pos3.Z + 0.5f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                    pos4.X + 0.5f + x, pos4.Y + 0.5f + y, pos4.Z + 0.5f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                    pos5.X + 0.5f + x, pos5.Y + 0.5f + y, pos5.Z + 0.5f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                    pos6.X + 0.5f + x, pos6.Y + 0.5f + y, pos6.Z + 0.5f + z, 0f, 0f, uv, 0f, 0f, -1f, // bottom left
                                 };
                                 outVerts.AddRange(_front);
 
+                                pos1 = new Vector4(1.25f - 0.5f, -.25f - 0.5f, 0, 1f);
+                                pos1 *= rotation;
+                                pos2 = new Vector4(1.25f - 0.5f, 1.25f - 0.5f, 0, 1f);
+                                pos2 *= rotation;
+                                pos3 = new Vector4(-.25f - 0.5f, 1.25f - 0.5f, 0, 1f);
+                                pos3 *= rotation;
+                                pos4 = new Vector4(-.25f - 0.5f, -.25f - 0.5f, 0, 1f);
+                                pos4 *= rotation;
+                                pos5 = new Vector4(1.25f - 0.5f, -.25f - 0.5f, 0, 1f);
+                                pos5 *= rotation;
+                                pos6 = new Vector4(-.25f - 0.5f, 1.25f - 0.5f, 0, 1f);
+                                pos6 *= rotation;
 
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
                                 float[] _back =
                                 {
-                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
-                                    1.25f + x,  1.25f + y, 0.5f + z, 1f, 1f, uv, 0f, 0f, 1f, // top right
-                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
-                                    -.25f + x,  -.25f + y, 0.5f + z, 0f, 0f, uv, 0f, 0f, 1f, // bottom left
-                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
-                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
+                                    pos1.X + 0.5f + x, pos1.Y + 0.5f + y, pos1.Z + 0.5f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                    pos2.X + 0.5f + x, pos2.Y + 0.5f + y, pos2.Z + 0.5f + z, 1f, 1f, uv, 0f, 0f, 1f, // top right
+                                    pos3.X + 0.5f + x, pos3.Y + 0.5f + y, pos3.Z + 0.5f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
+                                    pos4.X + 0.5f + x, pos4.Y + 0.5f + y, pos4.Z + 0.5f + z, 0f, 0f, uv, 0f, 0f, 1f, // bottom left
+                                    pos5.X + 0.5f + x, pos5.Y + 0.5f + y, pos5.Z + 0.5f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                    pos6.X + 0.5f + x, pos6.Y + 0.5f + y, pos6.Z + 0.5f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
                                 };
                                 outVerts.AddRange(_back);
 
+                                pos1 = new Vector4(0, 1.25f - 0.5f, 1.25f - 0.5f, 1f);
+                                pos1 *= rotation;
+                                pos2 = new Vector4(0, 1.25f - 0.5f, -.25f - 0.5f, 1f);
+                                pos2 *= rotation;
+                                pos3 = new Vector4(0, -.25f - 0.5f, -.25f - 0.5f, 1f);
+                                pos3 *= rotation;
+                                pos4 = new Vector4(0, 1.25f - 0.5f, 1.25f - 0.5f, 1f);
+                                pos4 *= rotation;
+                                pos5 = new Vector4(0, -.25f - 0.5f, -.25f - 0.5f, 1f);
+                                pos5 *= rotation;
+                                pos6 = new Vector4(0, -.25f - 0.5f, 1.25f - 0.5f, 1f);
+                                pos6 *= rotation;
 
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
                                 float[] _left =
                                 {
-                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left
-                                    0.5f + x,  1.25f + y, -.25f + z, 1f, 1f, uv, -1f, 0f, 0f, // top right
-                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
-                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left 
-                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
-                                    0.5f + x,  -.25f + y, 1.25f + z, 0f, 0f, uv, -1f, 0f, 0f, // bottom left
+                                    pos1.X + 0.5f + x, pos1.Y + 0.5f + y, pos1.Z + 0.5f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left
+                                    pos2.X + 0.5f + x, pos2.Y + 0.5f + y, pos2.Z + 0.5f + z, 1f, 1f, uv, -1f, 0f, 0f, // top right
+                                    pos3.X + 0.5f + x, pos3.Y + 0.5f + y, pos3.Z + 0.5f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                    pos4.X + 0.5f + x, pos4.Y + 0.5f + y, pos4.Z + 0.5f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left 
+                                    pos5.X + 0.5f + x, pos5.Y + 0.5f + y, pos5.Z + 0.5f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                    pos6.X + 0.5f + x, pos6.Y + 0.5f + y, pos6.Z + 0.5f + z, 0f, 0f, uv, -1f, 0f, 0f, // bottom left
                                 };
                                 outVerts.AddRange(_left);
 
+                                pos1 = new Vector4(0, -.25f - 0.5f, -.25f - 0.5f, 1f);
+                                pos1 *= rotation;
+                                pos2 = new Vector4(0, 1.25f - 0.5f, -.25f - 0.5f, 1f);
+                                pos2 *= rotation;
+                                pos3 = new Vector4(0, 1.25f - 0.5f, 1.25f - 0.5f, 1f);
+                                pos3 *= rotation;
+                                pos4 = new Vector4(0, -.25f - 0.5f, 1.25f - 0.5f, 1f);
+                                pos4 *= rotation;
+                                pos5 = new Vector4(0, -.25f - 0.5f, -.25f - 0.5f, 1f);
+                                pos5 *= rotation;
+                                pos6 = new Vector4(0, 1.25f - 0.5f, 1.25f - 0.5f, 1f);
+                                pos6 *= rotation;
 
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
                                 float[] _right =
                                 {
-                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
-                                    0.5f + x,  1.25f + y, -.25f + z, 1f, 1f, uv, 1f, 0f, 0f, // top right
-                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
-                                    0.5f + x,  -.25f + y, 1.25f + z, 0f, 0f, uv, 1f, 0f, 0f, // bottom left
-                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
-                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
+                                    pos1.X + 0.5f + x, pos1.Y + 0.5f + y, pos1.Z + 0.5f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                    pos2.X + 0.5f + x, pos2.Y + 0.5f + y, pos2.Z + 0.5f + z, 1f, 1f, uv, 1f, 0f, 0f, // top right
+                                    pos3.X + 0.5f + x, pos3.Y + 0.5f + y, pos3.Z + 0.5f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
+                                    pos4.X + 0.5f + x, pos4.Y + 0.5f + y, pos4.Z + 0.5f + z, 0f, 0f, uv, 1f, 0f, 0f, // bottom left
+                                    pos5.X + 0.5f + x, pos5.Y + 0.5f + y, pos5.Z + 0.5f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                    pos6.X + 0.5f + x, pos6.Y + 0.5f + y, pos6.Z + 0.5f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
                                 };
                                 outVerts.AddRange(_right);
 
+                                pos1 = new Vector4(1.25f - 0.5f, 0, -.25f - 0.5f, 1f);
+                                pos1 *= rotation;
+                                pos2 = new Vector4(-.25f - 0.5f, 0, -.25f - 0.5f, 1f);
+                                pos2 *= rotation;
+                                pos3 = new Vector4(-.25f - 0.5f, 0, 1.25f - 0.5f, 1f);
+                                pos3 *= rotation;
+                                pos4 = new Vector4(1.25f - 0.5f, 0, 1.25f - 0.5f, 1f);
+                                pos4 *= rotation;
+                                pos5 = new Vector4(1.25f - 0.5f, 0, -.25f - 0.5f, 1f);
+                                pos5 *= rotation;
+                                pos6 = new Vector4(-.25f - 0.5f, 0, 1.25f - 0.5f, 1f);
+                                pos6 *= rotation;
 
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
                                 float[] _top =
                                 {
-                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
-                                    -.25f + x,  0.5f + y, -.25f + z, 1f, 1f, uv, 0f, 1f, 0f, // top right
-                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
-                                    1.25f + x,  0.5f + y, 1.25f + z, 0f, 0f, uv, 0f, 1f, 0f, // bottom left
-                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
-                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
+                                    pos1.X + 0.5f + x, pos1.Y + 0.5f + y, pos1.Z + 0.5f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                    pos2.X + 0.5f + x, pos2.Y + 0.5f + y, pos2.Z + 0.5f + z, 1f, 1f, uv, 0f, 1f, 0f, // top right
+                                    pos3.X + 0.5f + x, pos3.Y + 0.5f + y, pos3.Z + 0.5f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
+                                    pos4.X + 0.5f + x, pos4.Y + 0.5f + y, pos4.Z + 0.5f + z, 0f, 0f, uv, 0f, 1f, 0f, // bottom left
+                                    pos5.X + 0.5f + x, pos5.Y + 0.5f + y, pos5.Z + 0.5f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                    pos6.X + 0.5f + x, pos6.Y + 0.5f + y, pos6.Z + 0.5f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
                                 };
                                 outVerts.AddRange(_top);
 
+                                pos1 = new Vector4(-.25f - 0.5f, 0, 1.25f - 0.5f, 1f);
+                                pos1 *= rotation;
+                                pos2 = new Vector4(-.25f - 0.5f, 0, -.25f - 0.5f, 1f);
+                                pos2 *= rotation;
+                                pos3 = new Vector4(1.25f - 0.5f, 0, -.25f - 0.5f, 1f);
+                                pos3 *= rotation;
+                                pos4 = new Vector4(-.25f - 0.5f, 0, 1.25f - 0.5f, 1f);
+                                pos4 *= rotation;
+                                pos5 = new Vector4(1.25f - 0.5f, 0, -.25f - 0.5f, 1f);
+                                pos5 *= rotation;
+                                pos6 = new Vector4(1.25f - 0.5f, 0, 1.25f - 0.5f, 1f);
+                                pos6 *= rotation;
 
                                 uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
                                 float[] _bottom =
                                 {
-                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
-                                    -.25f + x,  0.5f + y, -.25f + z, 1f, 1f, uv, 0f, -1f, 0f, // top right
-                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom 
-                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
-                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom right
-                                    1.25f + x,  0.5f + y, 1.25f + z, 0f, 0f, uv, 0f, -1f, 0f, // bottom left
+                                    pos1.X + 0.5f + x, pos1.Y + 0.5f + y, pos1.Z + 0.5f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                    pos2.X + 0.5f + x, pos2.Y + 0.5f + y, pos2.Z + 0.5f + z, 1f, 1f, uv, 0f, -1f, 0f, // top right
+                                    pos3.X + 0.5f + x, pos3.Y + 0.5f + y, pos3.Z + 0.5f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom 
+                                    pos4.X + 0.5f + x, pos4.Y + 0.5f + y, pos4.Z + 0.5f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                    pos5.X + 0.5f + x, pos5.Y + 0.5f + y, pos5.Z + 0.5f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom right
+                                    pos6.X + 0.5f + x, pos6.Y + 0.5f + y, pos6.Z + 0.5f + z, 0f, 0f, uv, 0f, -1f, 0f, // bottom left
                                 };
                                 outVerts.AddRange(_bottom);
                                 continue;
