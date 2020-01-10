@@ -52,38 +52,48 @@ namespace craftinggame.Mechanics
                         }
                         if (rand.Next(0, 20) > 18)
                         {
-                            blocks[x, high, z] = 5;
+                            blocks[x, high, z] = Block.GRASS;
                         }
                         else if (rand.Next(0, 40) > 38 && x > 3 && x < 13 && z > 3 && z < 13)
                         {
-                            blocks[x, high, z] = 9;
-                            blocks[x, high + 1, z] = 9;
-                            blocks[x, high + 2, z] = 9;
-                            blocks[x, high + 3, z] = 9;
-                            blocks[x + 1, high + 3, z] = 9;
-                            blocks[x + 1, high + 4, z] = 9;
-                            blocks[x + 1, high + 5, z] = 9;
+                            blocks[x, high, z] = Block.OAK_LOG;
+                            blocks[x, high + 1, z] = Block.OAK_LOG;
+                            blocks[x, high + 2, z] = Block.OAK_LOG;
+                            blocks[x, high + 3, z] = Block.OAK_LOG;
+                            blocks[x + 1, high + 3, z] = Block.OAK_LOG;
+                            blocks[x + 1, high + 4, z] = Block.OAK_LOG;
+                            blocks[x + 1, high + 5, z] = Block.OAK_LOG;
 
-                            blocks[x + 1, high + 6, z] = 10;
-                            blocks[x + 2, high + 5, z] = 10;
-                            blocks[x, high + 5, z] = 10;
-                            blocks[x + 1, high + 5, z + 1] = 10;
-                            blocks[x + 1, high + 5, z - 1] = 10;
-                            blocks[x + 2, high + 4, z] = 10;
-                            blocks[x, high + 4, z] = 10;
-                            blocks[x + 1, high + 4, z + 1] = 10;
-                            blocks[x + 1, high + 4, z - 1] = 10;
-                            blocks[x + 3, high + 4, z] = 10;
-                            blocks[x - 1, high + 4, z] = 10;
-                            blocks[x + 1, high + 4, z + 2] = 10;
-                            blocks[x + 1, high + 4, z - 2] = 10;
+                            blocks[x + 1, high + 6, z] = Block.BIRCH_LEAVES;
+                            blocks[x + 2, high + 5, z] = Block.BIRCH_LEAVES;
+                            blocks[x, high + 5, z] = Block.BIRCH_LEAVES;
+                            blocks[x + 1, high + 5, z + 1] = Block.BIRCH_LEAVES;
+                            blocks[x + 1, high + 5, z - 1] = Block.BIRCH_LEAVES;
+                            blocks[x + 2, high + 4, z] = Block.BIRCH_LEAVES;
+                            blocks[x, high + 4, z] = Block.BIRCH_LEAVES;
+                            blocks[x + 1, high + 4, z + 1] = Block.BIRCH_LEAVES;
+                            blocks[x + 1, high + 4, z - 1] = Block.BIRCH_LEAVES;
+
+                            blocks[x + 2, high + 4, z + 1] = Block.BIRCH_LEAVES;
+                            blocks[x, high + 4, z - 1] = Block.BIRCH_LEAVES;
+                            blocks[x + 2, high + 4, z - 1] = Block.BIRCH_LEAVES;
+                            blocks[x, high + 4, z + 1] = Block.BIRCH_LEAVES;
+                            blocks[x + 2, high + 5, z + 1] = Block.BIRCH_LEAVES;
+                            blocks[x, high + 5, z - 1] = Block.BIRCH_LEAVES;
+                            blocks[x + 2, high + 5, z - 1] = Block.BIRCH_LEAVES;
+                            blocks[x, high + 5, z + 1] = Block.BIRCH_LEAVES;
+
+                            blocks[x + 3, high + 4, z] = Block.BIRCH_LEAVES;
+                            blocks[x - 1, high + 4, z] = Block.BIRCH_LEAVES;
+                            blocks[x + 1, high + 4, z + 2] = Block.BIRCH_LEAVES;
+                            blocks[x + 1, high + 4, z - 2] = Block.BIRCH_LEAVES;
                         }
                         for (int y = 0; y < high; y++)
                         {
-                            byte value = 1;
+                            byte value = Block.GRASS_BLOCK;
                             if (y < high - 1)
                             {
-                                value = 3;
+                                value = Block.DIRT;
                             }
                             blocks[x, y, z] = value;
                         }
@@ -100,16 +110,16 @@ namespace craftinggame.Mechanics
                         }
                         for (int y = 0; y < high; y++)
                         {
-                            byte value = 8;
+                            byte value = Block.WATER;
                             
                             if (y < low)
                             {
                                 if (blocktype)
                                 {
-                                    value = 4;
+                                    value = Block.STONE;
                                 } else
                                 {
-                                    value = 3;
+                                    value = Block.DIRT;
                                 }
                             }
                             blocks[x, y, z] = value;
@@ -125,17 +135,17 @@ namespace craftinggame.Mechanics
                         }
                         if (rand.Next(0, 80) > 78)
                         {
-                            blocks[x, high, z] = 7;
+                            blocks[x, high, z] = Block.DEAD_BUSH;
                         }
                         else if (rand.Next(0, 1000) > 998)
                         {
-                            blocks[x, high, z] = 6;
-                            blocks[x, high + 1, z] = 6;
-                            blocks[x, high + 2, z] = 6;
+                            blocks[x, high, z] = Block.CACTUS;
+                            blocks[x, high + 1, z] = Block.CACTUS;
+                            blocks[x, high + 2, z] = Block.CACTUS;
                         }
                         for (int y = 0; y < high; y++)
                         {
-                            byte value = 2;
+                            byte value = Block.SAND;
                             blocks[x, y, z] = value;
                         }
                     }
@@ -231,6 +241,86 @@ namespace craftinggame.Mechanics
                     {
                         if (blocks[x, y, z] != 0)
                         {
+                            if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Leaves)
+                            {
+                                var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);
+                                float[] _front =
+                                {
+                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                    1.25f + x,  1.25f + y, 0.5f + z, 1f, 1f, uv, 0f, 0f, -1f, // top right
+                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, -1f, // top left 
+                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, -1f, // bottom right
+                                    -.25f + x,  -.25f + y, 0.5f + z, 0f, 0f, uv, 0f, 0f, -1f, // bottom left
+                                };
+                                outVerts.AddRange(_front);
+
+
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Back);
+                                float[] _back =
+                                {
+                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                    1.25f + x,  1.25f + y, 0.5f + z, 1f, 1f, uv, 0f, 0f, 1f, // top right
+                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
+                                    -.25f + x,  -.25f + y, 0.5f + z, 0f, 0f, uv, 0f, 0f, 1f, // bottom left
+                                    1.25f + x,  -.25f + y, 0.5f + z, 1f, 0f, uv, 0f, 0f, 1f, // bottom right
+                                    -.25f + x,  1.25f + y, 0.5f + z, 0f, 1f, uv, 0f, 0f, 1f, // top left 
+                                };
+                                outVerts.AddRange(_back);
+
+
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Left);
+                                float[] _left =
+                                {
+                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left
+                                    0.5f + x,  1.25f + y, -.25f + z, 1f, 1f, uv, -1f, 0f, 0f, // top right
+                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, -1f, 0f, 0f, // top left 
+                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, -1f, 0f, 0f, // bottom right
+                                    0.5f + x,  -.25f + y, 1.25f + z, 0f, 0f, uv, -1f, 0f, 0f, // bottom left
+                                };
+                                outVerts.AddRange(_left);
+
+
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Right);
+                                float[] _right =
+                                {
+                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                    0.5f + x,  1.25f + y, -.25f + z, 1f, 1f, uv, 1f, 0f, 0f, // top right
+                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
+                                    0.5f + x,  -.25f + y, 1.25f + z, 0f, 0f, uv, 1f, 0f, 0f, // bottom left
+                                    0.5f + x,  -.25f + y, -.25f + z, 1f, 0f, uv, 1f, 0f, 0f, // bottom right
+                                    0.5f + x,  1.25f + y, 1.25f + z, 0f, 1f, uv, 1f, 0f, 0f, // top left 
+                                };
+                                outVerts.AddRange(_right);
+
+
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Top);
+                                float[] _top =
+                                {
+                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                    -.25f + x,  0.5f + y, -.25f + z, 1f, 1f, uv, 0f, 1f, 0f, // top right
+                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
+                                    1.25f + x,  0.5f + y, 1.25f + z, 0f, 0f, uv, 0f, 1f, 0f, // bottom left
+                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, 1f, 0f, // bottom right
+                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, 1f, 0f, // top left 
+                                };
+                                outVerts.AddRange(_top);
+
+
+                                uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Bottom);
+                                float[] _bottom =
+                                {
+                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                    -.25f + x,  0.5f + y, -.25f + z, 1f, 1f, uv, 0f, -1f, 0f, // top right
+                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom 
+                                    -.25f + x,  0.5f + y, 1.25f + z, 0f, 1f, uv, 0f, -1f, 0f, // top left 
+                                    1.25f + x,  0.5f + y, -.25f + z, 1f, 0f, uv, 0f, -1f, 0f, // bottom right
+                                    1.25f + x,  0.5f + y, 1.25f + z, 0f, 0f, uv, 0f, -1f, 0f, // bottom left
+                                };
+                                outVerts.AddRange(_bottom);
+                                continue;
+                            }
                             if (Block.GetBlockType(blocks[x, y, z]) == Block.Type.Grass)
                             {
                                 var uv = Block.FaceToTexcoord(blocks[x, y, z], Block.Face.Front);

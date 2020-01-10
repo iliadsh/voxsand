@@ -9,6 +9,18 @@ namespace craftinggame.Mechanics
 {
     public class Block
     {
+        public const byte AIR = 0;
+        public const byte GRASS_BLOCK = 1;
+        public const byte SAND = 2;
+        public const byte DIRT = 3;
+        public const byte STONE = 4;
+        public const byte GRASS = 5;
+        public const byte CACTUS = 6;
+        public const byte DEAD_BUSH = 7;
+        public const byte WATER = 8;
+        public const byte OAK_LOG = 9;
+        public const byte BIRCH_LEAVES = 10;
+
         public enum Face
         {
             Front,
@@ -24,6 +36,7 @@ namespace craftinggame.Mechanics
             Solid,
             Transparent,
             Grass,
+            Leaves,
             Liquid,
         }
 
@@ -37,21 +50,22 @@ namespace craftinggame.Mechanics
         {
             switch(id)
             {
-                case 0:
+                case AIR:
                     return Type.Transparent;
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 6:
-                case 9:
+                case GRASS_BLOCK:
+                case SAND:
+                case DIRT:
+                case STONE:
+                case CACTUS:
+                case OAK_LOG:
                     return Type.Solid;
-                case 8:
+                case WATER:
                     return Type.Liquid;
-                case 5:
-                case 7:
-                case 10:
+                case GRASS:
+                case DEAD_BUSH:       
                     return Type.Grass;
+                case BIRCH_LEAVES:
+                    return Type.Leaves;
                 default:
                     return Type.Transparent;
             }
@@ -61,19 +75,19 @@ namespace craftinggame.Mechanics
         {
             switch(id)
             {
-                case 0:
+                case AIR:
                     return Opacity.Transparent;
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 6:
-                case 9:
+                case GRASS_BLOCK:
+                case SAND:
+                case DIRT:
+                case STONE:
+                case CACTUS:
+                case OAK_LOG:
                     return Opacity.Solid;
-                case 5:
-                case 7:
-                case 8:
-                case 10:
+                case GRASS:
+                case DEAD_BUSH:
+                case WATER:
+                case BIRCH_LEAVES:
                     return Opacity.Transparent;
                 default:
                     return Opacity.Transparent;
@@ -84,7 +98,7 @@ namespace craftinggame.Mechanics
         {
             switch (id)
             {
-                case 1: 
+                case GRASS_BLOCK: 
                     switch (face)
                     {
                         case Face.Top:
@@ -92,23 +106,23 @@ namespace craftinggame.Mechanics
                         default:
                             return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass_side.png");
                     }
-                case 2:
+                case SAND:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\sand.png");
-                case 3:
+                case DIRT:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dirt.png");
-                case 4:
+                case STONE:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\stone.png");
-                case 5:
+                case GRASS:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass.png");
-                case 6:
+                case CACTUS:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\cactus.png");
-                case 7:
+                case DEAD_BUSH:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dead_bush.png");
-                case 8:
+                case WATER:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\water_still.png");
-                case 9:
+                case OAK_LOG:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\oak_log.png");
-                case 10:
+                case BIRCH_LEAVES:
                     return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\birch_leaves.png");
                 default:
                     return 0;
