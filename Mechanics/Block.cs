@@ -103,6 +103,8 @@ namespace craftinggame.Mechanics
                     {
                         case Face.Top:
                             return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass_top.png");
+                        case Face.Bottom:
+                            return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\dirt.png");
                         default:
                             return ChunkMesh.chunkTexture.GetImageIndex("Resources/textures\\grass_side.png");
                     }

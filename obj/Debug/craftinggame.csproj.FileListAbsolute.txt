@@ -21,7 +21,6 @@ D:\repos\CraftingGame\bin\Debug\craftinggame.pdb
 D:\repos\CraftingGame\bin\Debug\OpenTK.pdb
 D:\repos\CraftingGame\bin\Debug\OpenTK.xml
 D:\repos\CraftingGame\obj\Debug\craftinggame.csproj.CopyComplete
-D:\repos\CraftingGame\bin\Debug\OpenTK.dll
 D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_side.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\grass_top.png
 D:\repos\CraftingGame\bin\Debug\Resources\textures\sand.png

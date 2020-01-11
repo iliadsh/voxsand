@@ -215,7 +215,15 @@ namespace craftinggame
             {
                 escaped = false;
                 CursorVisible = false;
+                return;
             }
+            Physics.Raycast(player.entity.Position, player.camera.Front, 10f, (x, y, z, face) =>
+            {
+                var type = Block.GetBlockType(GetBlock(x, y, z));
+                if (type == Block.Type.Transparent || type == Block.Type.Liquid) return false;
+                SetBlock(x, y, z, 0);
+                return true;
+            });
             base.OnMouseDown(e);
         }
 
@@ -230,6 +238,46 @@ namespace craftinggame
         {
             chunkMeshingThread.Abort();
             base.OnUnload(e);
+        }
+
+        public byte GetBlock(int x, int y, int z)
+        {
+            if (y < 0 || y > 255)
+                throw new Exception("Tried to get invalid block! (y in invalid range)");
+            if (chunks.ContainsKey(Chunk.PosToChunkPos(x, z))) {
+                Chunk chunk = chunks[Chunk.PosToChunkPos(x, z)];
+                var pos = Chunk.PosToChunkOffset(x, z);
+                return chunk.blocks[pos.x, y, pos.z];
+            } else throw new Exception("Tried to get invalid block! (chunk not loaded)");
+        }
+
+        public void SetBlock(int x, int y, int z, byte id)
+        {
+            if (y < 0 || y > 255)
+                throw new Exception("Tried to set invalid block! (y in invalid range)");
+            if (chunks.ContainsKey(Chunk.PosToChunkPos(x, z)))
+            {
+                var newpos = Chunk.PosToChunkPos(x, z);
+                Chunk chunk = chunks[newpos];
+                var pos = Chunk.PosToChunkOffset(x, z);
+                chunk.blocks[pos.x, y, pos.z] = id;
+
+                var pospx = (newpos.x + 1, newpos.z);
+                Chunk chunkpx = chunks.ContainsKey(pospx) ? chunks[pospx] : null;
+                var posnx = (newpos.x - 1, newpos.z);
+                Chunk chunknx = chunks.ContainsKey(posnx) ? chunks[posnx] : null;
+                var pospz = (newpos.x, newpos.z + 1);
+                Chunk chunkpz = chunks.ContainsKey(pospz) ? chunks[pospz] : null;
+                var posnz = (newpos.x, newpos.z - 1);
+                Chunk chunknz = chunks.ContainsKey(posnz) ? chunks[posnz] : null;
+                if (chunkpx != null && chunkpx.mesh != null) meshingQueue.Enqueue(chunkpx);
+                if (chunknx != null && chunknx.mesh != null) meshingQueue.Enqueue(chunknx);
+                if (chunkpz != null && chunkpz.mesh != null) meshingQueue.Enqueue(chunkpz);
+                if (chunknz != null && chunknz.mesh != null) meshingQueue.Enqueue(chunknz);
+
+                meshingQueue.Enqueue(chunk);
+            }
+            else throw new Exception("Tried to set invalid block! (chunk not loaded)");
         }
     }
 }
