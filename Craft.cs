@@ -221,7 +221,22 @@ namespace craftinggame
             {
                 var type = Block.GetBlockType(GetBlock(x, y, z));
                 if (type == Block.Type.Transparent || type == Block.Type.Liquid) return false;
-                SetBlock(x, y, z, 0);
+                if (e.Button == MouseButton.Left)
+                {
+                    SetBlock(x, y, z, Block.AIR);
+                }
+                else if (e.Button == MouseButton.Right)
+                {
+                    Vector3 vec = new Vector3(x, y, z);
+                    vec += face;
+                    SetBlock((int)vec.X, (int)vec.Y, (int)vec.Z, Block.OAK_LOG);
+                }
+                else if (e.Button == MouseButton.Middle)
+                {
+                    Vector3 vec = new Vector3(x, y, z);
+                    vec += face;
+                    SetBlock((int)vec.X, (int)vec.Y, (int)vec.Z, Block.BIRCH_LEAVES);
+                }
                 return true;
             });
             base.OnMouseDown(e);
