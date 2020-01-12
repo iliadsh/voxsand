@@ -1,6 +1,6 @@
 ﻿#version 330 core
 
-#define BIAS 0.01
+#define BIAS 0.001
 
 in vec2 texCoord;
 flat in int layer;

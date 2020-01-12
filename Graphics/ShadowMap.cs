@@ -14,8 +14,8 @@ namespace craftinggame.Graphics
         public static Shader shadowShader = new Shader("shadow_shader.vert", "shadow_shader.frag");
         public static int FBO;
         public static int depthMap;
-        public const int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
-        public const float NEAR_PLANE = 1.0f, FAR_PLANE = 700f;
+        public const int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+        public const float NEAR_PLANE = 1.0f, FAR_PLANE = 250f;
         public static Matrix4 lightProjection;
         public static Matrix4 lightView;
 
@@ -48,7 +48,7 @@ namespace craftinggame.Graphics
             GL.ReadBuffer(ReadBufferMode.None);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-            lightProjection = Matrix4.CreateOrthographic(100f, 100f, NEAR_PLANE, FAR_PLANE);
+            lightProjection = Matrix4.CreateOrthographic(450f, 450f, NEAR_PLANE, FAR_PLANE);
         }
 
         public static void PreludeRender()
