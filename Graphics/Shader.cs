@@ -118,7 +118,8 @@ namespace craftinggame.Graphics
         public void SetMatrix4(string name, Matrix4 data)
         {
             GL.UseProgram(Handle);
-            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
+            if(_uniformLocations.ContainsKey(name))
+                GL.UniformMatrix4(_uniformLocations[name], true, ref data);
         }
 
         public void SetVector3(string name, Vector3 data)

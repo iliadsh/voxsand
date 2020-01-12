@@ -1,7 +1,7 @@
 ﻿#version 330 core
-in vec3 aPosition;
-in vec2 aTexCoord;
-in float aLayer;
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in float aLayer;
 
 out vec2 texCoord;
 flat out int layer;

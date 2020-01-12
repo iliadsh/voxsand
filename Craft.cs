@@ -46,6 +46,7 @@ namespace craftinggame
             player = new Player(10, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
             skybox = new Skybox();
+            ShadowMap.Setup();
             chunkMeshingThread = new Thread(MeshChunks);
             chunkMeshingThread.Start();
 
@@ -144,52 +145,22 @@ namespace craftinggame
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             globalTime += (float)e.Time;
+
+            ShadowMap.PreludeRender();
+            RenderChunks(ShadowMap.shadowShader);
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.Viewport(0, 0, Width, Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.Texture2D, ShadowMap.depthMap);
 
             ChunkMesh.PreludeRender();
-            foreach(KeyValuePair<(int x, int z), Chunk> chunk in chunks)
-            {
-                if (chunk.Value.needsRemesh)
-                {
-                    if (chunk.Value.mesh != null)
-                        chunk.Value.KillMesh();
+            ChunkMesh.PreludeNormalRender();
+            RenderChunks(ChunkMesh.chunkShader);
 
-                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts, 0);
-                    chunk.Value.verts = null;
-
-                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts, 1);
-                    chunk.Value.waterVerts = null;
-
-                    chunk.Value.needsRemesh = false;
-                }
-                if (chunk.Value.mesh != null)
-                {
-                    ChunkMesh.PreludeNormalRender();
-                    chunk.Value.mesh.Render(chunk.Key, 0);
-                }
-            }
-
-            foreach (KeyValuePair<(int x, int z), Chunk> chunk in chunks)
-            {
-                if (chunk.Value.needsRemesh)
-                {
-                    if (chunk.Value.mesh != null)
-                        chunk.Value.KillMesh();
-
-                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts, 0);
-                    chunk.Value.verts = null;
-
-                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts, 1);
-                    chunk.Value.waterVerts = null;
-
-                    chunk.Value.needsRemesh = false;
-                }
-                if (chunk.Value.waterMesh != null)
-                {
-                    ChunkMesh.PreludeWaterRender();
-                    chunk.Value.waterMesh.Render(chunk.Key, 1);
-                }
-            }
+            ChunkMesh.PreludeWaterRender();
+            RenderWater();
 
             Skybox.PreludeRender();
             skybox.Render();
@@ -197,6 +168,41 @@ namespace craftinggame
             Context.SwapBuffers();
 
             base.OnRenderFrame(e);
+        }
+
+        void RenderChunks(Shader shader)
+        {
+            foreach (KeyValuePair<(int x, int z), Chunk> chunk in chunks)
+            {
+                if (chunk.Value.needsRemesh)
+                {
+                    if (chunk.Value.mesh != null)
+                        chunk.Value.KillMesh();
+
+                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts);
+                    chunk.Value.verts = null;
+
+                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts);
+                    chunk.Value.waterVerts = null;
+
+                    chunk.Value.needsRemesh = false;
+                }
+                if (chunk.Value.mesh != null)
+                {
+                    chunk.Value.mesh.Render(chunk.Key, shader);
+                }
+            }
+        }
+
+        void RenderWater()
+        {
+            foreach (KeyValuePair<(int x, int z), Chunk> chunk in chunks)
+            {
+                if (chunk.Value.waterMesh != null)
+                {
+                    chunk.Value.waterMesh.Render(chunk.Key, ChunkMesh.chunkWaterShader);
+                }
+            }
         }
 
         protected override void OnMouseMove(MouseMoveEventArgs e)

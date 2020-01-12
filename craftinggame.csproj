@@ -76,6 +76,7 @@
     <Compile Include="Graphics\ChunkMesh.cs" />
     <Compile Include="Graphics\ChunkTexture.cs" />
     <Compile Include="Graphics\CubemapTexture.cs" />
+    <Compile Include="Graphics\ShadowMap.cs" />
     <Compile Include="Graphics\Skybox.cs" />
     <Compile Include="Mechanics\Block.cs" />
     <Compile Include="Mechanics\Chunk.cs" />
@@ -102,6 +103,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\chunk_shader.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\shadow_shader.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\shadow_shader.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\skybox_shader.frag">

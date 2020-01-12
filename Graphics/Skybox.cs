@@ -87,7 +87,7 @@ namespace craftinggame.Graphics
             GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
             GL.BufferData(BufferTarget.ArrayBuffer, verts.Length * sizeof(float), verts, BufferUsageHint.StaticDraw);
 
-            int vertexLocation = shader.GetAttribLocation("aPos");
+            int vertexLocation = 0;//shader.GetAttribLocation("aPos");
             GL.EnableVertexAttribArray(vertexLocation);
             GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
 
