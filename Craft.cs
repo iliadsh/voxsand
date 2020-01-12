@@ -146,9 +146,11 @@ namespace craftinggame
         {
             globalTime += (float)e.Time;
 
+            GL.Disable(EnableCap.CullFace);
             ShadowMap.PreludeRender();
             RenderChunks(ShadowMap.shadowShader);
 
+            GL.Enable(EnableCap.CullFace);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Viewport(0, 0, Width, Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

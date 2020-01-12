@@ -14,7 +14,7 @@ namespace craftinggame.Graphics
         public static Shader shadowShader = new Shader("shadow_shader.vert", "shadow_shader.frag");
         public static int FBO;
         public static int depthMap;
-        public const int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+        public const int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
         public const float NEAR_PLANE = 1.0f, FAR_PLANE = 700f;
         public static Matrix4 lightProjection;
         public static Matrix4 lightView;
@@ -34,8 +34,8 @@ namespace craftinggame.Graphics
                 PixelFormat.DepthComponent,
                 PixelType.Float,
                 IntPtr.Zero);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
             float[] borderColor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -54,7 +54,10 @@ namespace craftinggame.Graphics
         public static void PreludeRender()
         {
             var playerPos = Craft.theCraft.player.entity.Position;
-            lightView = Matrix4.LookAt(new Vector3(4f, 10, 0), new Vector3(), new Vector3(0, 1, 0));
+            playerPos.Y = 0;
+            var lightPos = playerPos + new Vector3(100f, 0f, 40f);
+            lightPos.Y = 200;
+            lightView = Matrix4.LookAt(lightPos, playerPos, new Vector3(0, 1, 0));
             shadowShader.Use();
             shadowShader.SetMatrix4("lightProjection", lightProjection);
             shadowShader.SetMatrix4("lightView", lightView);
