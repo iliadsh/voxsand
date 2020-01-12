@@ -14,8 +14,8 @@ namespace craftinggame.Graphics
         public static Shader shadowShader = new Shader("shadow_shader.vert", "shadow_shader.frag");
         public static int FBO;
         public static int depthMap;
-        public const int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-        public const float NEAR_PLANE = 1.0f, FAR_PLANE = 250f;
+        public const int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
+        public const float NEAR_PLANE = 1.0f, FAR_PLANE = 300f;
         public static Matrix4 lightProjection;
         public static Matrix4 lightView;
 
@@ -48,16 +48,18 @@ namespace craftinggame.Graphics
             GL.ReadBuffer(ReadBufferMode.None);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-            lightProjection = Matrix4.CreateOrthographic(450f, 450f, NEAR_PLANE, FAR_PLANE);
+            lightProjection = Matrix4.CreateOrthographic(75f, 75f, NEAR_PLANE, FAR_PLANE);
         }
 
         public static void PreludeRender()
         {
+            var offset = new Vector3(/*(float)Math.Sin(Craft.globalTime) * */50f, 0f, /*(float)Math.Cos(Craft.globalTime) * */50f);
             var playerPos = Craft.theCraft.player.entity.Position;
             playerPos.Y = 0;
-            var lightPos = playerPos + new Vector3(100f, 0f, 40f);
-            lightPos.Y = 200;
-            lightView = Matrix4.LookAt(lightPos, playerPos, new Vector3(0, 1, 0));
+            var lightPos = playerPos + offset;
+            lightPos.Y = 260f;
+            var lightLook = playerPos - offset;
+            lightView = Matrix4.LookAt(lightPos, lightLook, new Vector3(0, 1, 0));
             shadowShader.Use();
             shadowShader.SetMatrix4("lightProjection", lightProjection);
             shadowShader.SetMatrix4("lightView", lightView);

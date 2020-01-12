@@ -11,6 +11,11 @@ uniform sampler2D texture1;
 
 float ShadowCalculation(vec4 fragPosLightSpace) 
 {
+	if (abs(fragPosLightSpace.x) >= 1.0 ||
+           abs(fragPosLightSpace.y) >= 1.0 ||
+           abs(fragPosLightSpace.z) >= 1.0)
+          return 0.0;
+
 	//// perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     //// transform to [0,1] range
@@ -20,7 +25,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     //// get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     //// check whether current frag pos is in shadow
-    float bias = 0;//0.00005;
+    float bias = 0.0005;
 
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(texture1, 0);
@@ -33,9 +38,6 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 		}    
 	}
 	shadow /= 9.0;
-
-	if(projCoords.z > 1.0)
-        shadow = 0.0;
 
     return shadow;
 }
