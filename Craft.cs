@@ -99,6 +99,11 @@ namespace craftinggame
                 return;
             }
 
+            if (input.IsKeyDown(Key.G))
+            {
+                Console.WriteLine($"[DEBUG]: pX={player.entity.Position.X} pY={player.entity.Position.Y} pZ={player.entity.Position.Z} \n\t Pi={player.entity.Pitch} Ya={player.entity.Yaw} \n\t Dx={player.camera.Front.X} Dy={player.camera.Front.Y} Dz={player.camera.Front.Z}");
+            }
+
             const float cameraSpeed = 25.5f;
             const float sensitivity = 0.002f;
 

@@ -37,7 +37,7 @@ namespace craftinggame.Graphics
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
 
             for (int i = 0; i < files.Length; i++)
             {
@@ -64,9 +64,10 @@ namespace craftinggame.Graphics
             }
 
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapLinear);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureLodBias, -1);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2DArray);
-            //GL.GetFloat((GetPName)All.MaxTextureMaxAnisotropy, out float maxAniso);
-            //GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)All.TextureMaxAnisotropy, maxAniso);
+            GL.GetFloat((GetPName)All.MaxTextureMaxAnisotropy, out float maxAniso);
+            GL.TexParameter(TextureTarget.Texture2DArray, (TextureParameterName)All.TextureMaxAnisotropy, maxAniso);
         }
 
         public void Use(TextureUnit unit = TextureUnit.Texture0)

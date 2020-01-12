@@ -53,7 +53,7 @@ namespace craftinggame.Graphics
 
         public static void PreludeRender()
         {
-            var offset = new Vector3(/*(float)Math.Sin(Craft.globalTime) * */50f, 0f, /*(float)Math.Cos(Craft.globalTime) * */50f);
+            var offset = new Vector3((float)Math.Sin(Craft.globalTime) * 50f, 0f, (float)Math.Cos(Craft.globalTime) * 50f);
             var playerPos = Craft.theCraft.player.entity.Position;
             playerPos.Y = 0;
             var lightPos = playerPos + offset;
