@@ -12,6 +12,7 @@ void main()
 	vec3 norm = normalize(Normal);
 	
 	vec4 texel = vec4(texture(texture0, vec3(texCoord.xy, layer)));
+	texel = vec4(texel.xyz * 1.1f, texel.w);
 	if (texel.a < 0.7)
 		discard;
 

@@ -36,12 +36,12 @@ namespace craftinggame
             theCraft = this;
             VSync = VSyncMode.Off;
             //WindowState = WindowState.Fullscreen;
-            GL.ClearColor(0.01176470588f, 0.59607843137f, 0.68823529411f, 1.0f);
+            GL.ClearColor(0.5f, 0.5f, 0.7f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);
             GL.Enable(EnableCap.CullFace);
-            GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            //GL.Enable(EnableCap.FramebufferSrgb);
 
             player = new Player(10, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
@@ -219,6 +219,7 @@ namespace craftinggame
             }
             Physics.Raycast(player.entity.Position, player.camera.Front, 10f, (x, y, z, face) =>
             {
+                if (y < 0 || y > 255) return false;
                 var type = Block.GetBlockType(GetBlock(x, y, z));
                 if (type == Block.Type.Transparent || type == Block.Type.Liquid) return false;
                 if (e.Button == MouseButton.Left)
@@ -229,12 +230,14 @@ namespace craftinggame
                 {
                     Vector3 vec = new Vector3(x, y, z);
                     vec += face;
+                    if (vec.Y < 0 || vec.Y > 255) return true;
                     SetBlock((int)vec.X, (int)vec.Y, (int)vec.Z, Block.OAK_LOG);
                 }
                 else if (e.Button == MouseButton.Middle)
                 {
                     Vector3 vec = new Vector3(x, y, z);
                     vec += face;
+                    if (vec.Y < 0 || vec.Y > 255) return true;
                     SetBlock((int)vec.X, (int)vec.Y, (int)vec.Z, Block.BIRCH_LEAVES);
                 }
                 return true;
@@ -285,12 +288,25 @@ namespace craftinggame
                 Chunk chunkpz = chunks.ContainsKey(pospz) ? chunks[pospz] : null;
                 var posnz = (newpos.x, newpos.z - 1);
                 Chunk chunknz = chunks.ContainsKey(posnz) ? chunks[posnz] : null;
-                if (chunkpx != null && chunkpx.mesh != null) meshingQueue.Enqueue(chunkpx);
-                if (chunknx != null && chunknx.mesh != null) meshingQueue.Enqueue(chunknx);
-                if (chunkpz != null && chunkpz.mesh != null) meshingQueue.Enqueue(chunkpz);
-                if (chunknz != null && chunknz.mesh != null) meshingQueue.Enqueue(chunknz);
 
-                meshingQueue.Enqueue(chunk);
+                if (Block.GetBlockOpacity(id) == Block.Opacity.Transparent)
+                {
+                    if (chunkpx != null && chunkpx.mesh != null) meshingQueue.Enqueue(chunkpx);
+                    if (chunknx != null && chunknx.mesh != null) meshingQueue.Enqueue(chunknx);
+                    if (chunkpz != null && chunkpz.mesh != null) meshingQueue.Enqueue(chunkpz);
+                    if (chunknz != null && chunknz.mesh != null) meshingQueue.Enqueue(chunknz);
+
+                    meshingQueue.Enqueue(chunk);
+                }
+                else
+                {
+                    meshingQueue.Enqueue(chunk);
+
+                    if (chunkpx != null && chunkpx.mesh != null) meshingQueue.Enqueue(chunkpx);
+                    if (chunknx != null && chunknx.mesh != null) meshingQueue.Enqueue(chunknx);
+                    if (chunkpz != null && chunkpz.mesh != null) meshingQueue.Enqueue(chunkpz);
+                    if (chunknz != null && chunknz.mesh != null) meshingQueue.Enqueue(chunknz);
+                }
             }
             else throw new Exception("Tried to set invalid block! (chunk not loaded)");
         }

@@ -63,10 +63,10 @@ namespace craftinggame.Graphics
                 }
             }
 
-            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapLinear);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2DArray);
-            GL.GetFloat((GetPName)All.MaxTextureMaxAnisotropy, out float maxAniso);
-            GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)All.TextureMaxAnisotropy, maxAniso);
+            //GL.GetFloat((GetPName)All.MaxTextureMaxAnisotropy, out float maxAniso);
+            //GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)All.TextureMaxAnisotropy, maxAniso);
         }
 
         public void Use(TextureUnit unit = TextureUnit.Texture0)

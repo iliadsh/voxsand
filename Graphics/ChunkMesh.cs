@@ -22,11 +22,13 @@ namespace craftinggame.Graphics
 
         public static void PreludeNormalRender()
         {
+            GL.Disable(EnableCap.Blend);
             chunkShader.Use();
         }
 
         public static void PreludeWaterRender()
         {
+            GL.Enable(EnableCap.Blend);
             chunkWaterShader.Use();
             chunkWaterShader.SetFloat("globalTime", Craft.globalTime);
         }
