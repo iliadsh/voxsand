@@ -73,8 +73,8 @@ namespace craftinggame.Graphics
         {
             GL.DepthMask(false);
             GL.BindVertexArray(VAO);
-            shader.SetMatrix4("view", new Matrix4(new Matrix3(Craft.theCraft.player.camera.GetViewMatrix())));
-            shader.SetMatrix4("projection", Craft.theCraft.player.camera.GetProjectionMatrix());
+            shader.SetMatrix4("view", new Matrix4(new Matrix3(Craft.theCraft.player.camera.view)));
+            shader.SetMatrix4("projection", Craft.theCraft.player.camera.projection);
             GL.DrawArrays(PrimitiveType.Triangles, 0, vertAmount);
             GL.DepthMask(true);
         }

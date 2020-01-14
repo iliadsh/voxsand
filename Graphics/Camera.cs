@@ -12,6 +12,9 @@ namespace craftinggame.Graphics
         private Vector3 _up = Vector3.UnitY;
         private Vector3 _right = Vector3.UnitX;
 
+        public Matrix4 view;
+        public Matrix4 projection;
+
         private float _fov = (float)MathHelper.DegreesToRadians(45.0);
 
         public Camera(Entity entity, float aspectRatio)

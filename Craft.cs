@@ -150,6 +150,8 @@ namespace craftinggame
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             globalTime += (float)e.Time;
+            player.camera.view = player.camera.GetViewMatrix();
+            player.camera.projection = player.camera.GetProjectionMatrix();
 
             GL.Disable(EnableCap.CullFace);
             ShadowMap.PreludeRender();
@@ -196,6 +198,34 @@ namespace craftinggame
                 }
                 if (chunk.Value.mesh != null)
                 {
+                    var chunkPos = chunk.Value.position;
+
+                    var p1 = new Vector3(chunkPos.x * 16, 0, chunkPos.z * 16);
+                    var p1ss = new Vector4(p1, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p2 = new Vector3(chunkPos.x * 16 + 16, 0, chunkPos.z * 16);
+                    var p2ss = new Vector4(p2, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p3 = new Vector3(chunkPos.x * 16, 0, chunkPos.z * 16 + 16);
+                    var p3ss = new Vector4(p3, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p4 = new Vector3(chunkPos.x * 16 + 16, 0, chunkPos.z * 16 + 16);
+                    var p4ss = new Vector4(p4, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p11 = new Vector3(chunkPos.x * 16, 256, chunkPos.z * 16);
+                    var p11ss = new Vector4(p11, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p12 = new Vector3(chunkPos.x * 16 + 16, 256, chunkPos.z * 16);
+                    var p12ss = new Vector4(p12, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p13 = new Vector3(chunkPos.x * 16, 256, chunkPos.z * 16 + 16);
+                    var p13ss = new Vector4(p13, 1.0f) * player.camera.view * player.camera.projection;
+
+                    var p14 = new Vector3(chunkPos.x * 16 + 16, 256, chunkPos.z * 16 + 16);
+                    var p14ss = new Vector4(p14, 1.0f) * player.camera.view * player.camera.projection;
+
+                    if (p1ss.Z < 0 && p2ss.Z < 0 && p3ss.Z < 0 && p3ss.Z < 0 && p11ss.Z < 0 && p12ss.Z < 0 && p13ss.Z < 0 && p13ss.Z < 0) continue;
+
                     chunk.Value.mesh.Render(chunk.Key, shader);
                 }
             }

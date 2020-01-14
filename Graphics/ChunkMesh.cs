@@ -71,8 +71,8 @@ namespace craftinggame.Graphics
             GL.BindVertexArray(VAO);
             var model = Matrix4.Identity * Matrix4.CreateTranslation(pos.x * 16, 0, pos.z * 16);
             usedShader.SetMatrix4("model", model);
-            usedShader.SetMatrix4("view", Craft.theCraft.player.camera.GetViewMatrix());
-            usedShader.SetMatrix4("projection", Craft.theCraft.player.camera.GetProjectionMatrix());
+            usedShader.SetMatrix4("view", Craft.theCraft.player.camera.view);
+            usedShader.SetMatrix4("projection", Craft.theCraft.player.camera.projection);
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, vertAmount);
         }
