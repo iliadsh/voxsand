@@ -10,7 +10,7 @@ in float visibility;
 uniform sampler2DArray texture0;
 uniform sampler2D texture1;
 
-const vec3 skyColour = vec3(0.5, 0.5, 0.6);
+const vec3 skyColour = vec3(0.7, 0.7, 0.8);
 
 float ShadowCalculation(vec4 fragPosLightSpace) 
 {
@@ -28,7 +28,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     //// get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     //// check whether current frag pos is in shadow
-    float bias = 0.0001;
+    float bias = 0.0002;
 
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(texture1, 0);

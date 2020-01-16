@@ -5,9 +5,9 @@ in vec3 TexCoords;
 
 uniform samplerCube skybox;
 
-const vec3 fogColour = vec3(0.5, 0.5, 0.6);
+const vec3 fogColour = vec3(0.7, 0.7, 0.8);
 const float lowerLimit = 0.0;
-const float upperLimit = 1.0;
+const float upperLimit = 0.5;
 
 void main()
 {    

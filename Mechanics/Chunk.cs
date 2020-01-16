@@ -55,39 +55,58 @@ namespace craftinggame.Mechanics
                         {
                             blocks[x, high, z] = Block.GRASS;
                         }
-                        else if (rand.Next(0, 40) > 38 && x > 3 && x < 13 && z > 3 && z < 13)
+                        else if (rand.Next(0, 40) > 38 && x > 4 && x < 12 && z > 4 && z < 12)
                         {
+                            //Main trunk
                             blocks[x, high, z] = Block.OAK_LOG;
                             blocks[x, high + 1, z] = Block.OAK_LOG;
                             blocks[x, high + 2, z] = Block.OAK_LOG;
                             blocks[x, high + 3, z] = Block.OAK_LOG;
-                            blocks[x + 1, high + 3, z] = Block.OAK_LOG;
-                            blocks[x + 1, high + 4, z] = Block.OAK_LOG;
-                            blocks[x + 1, high + 5, z] = Block.OAK_LOG;
+                            blocks[x, high + 4, z] = Block.OAK_LOG;
+                            blocks[x, high + 5, z] = Block.OAK_LOG;
+                            blocks[x, high + 6, z] = Block.OAK_LOG;
+                            blocks[x, high + 7, z] = Block.OAK_LOG;
+                            blocks[x, high + 8, z] = Block.OAK_LOG;
+                            blocks[x, high + 9, z] = Block.OAK_LOG;
+                            //+X trunk
+                            blocks[x + 1, high + 6, z] = Block.OAK_LOG;
+                            blocks[x + 2, high + 6, z] = Block.OAK_LOG;
+                            blocks[x + 3, high + 6, z] = Block.OAK_LOG;
+                            blocks[x + 3, high + 7, z] = Block.OAK_LOG;
+                            blocks[x + 3, high + 8, z] = Block.OAK_LOG;
+                            //-X trunk
+                            blocks[x - 1, high + 6, z] = Block.OAK_LOG;
+                            blocks[x - 1, high + 7, z] = Block.OAK_LOG;
+                            //+Z trunk
+                            blocks[x, high + 7, z + 1] = Block.OAK_LOG;
+                            blocks[x, high + 7, z + 2] = Block.OAK_LOG;
+                            blocks[x, high + 8, z + 2] = Block.OAK_LOG;
+                            //-Z trunk
+                            blocks[x, high + 7, z - 1] = Block.OAK_LOG;
+                            blocks[x, high + 7, z - 2] = Block.OAK_LOG;
 
-                            blocks[x + 1, high + 6, z] = Block.BIRCH_LEAVES;
-                            blocks[x + 2, high + 5, z] = Block.BIRCH_LEAVES;
-                            blocks[x, high + 5, z] = Block.BIRCH_LEAVES;
-                            blocks[x + 1, high + 5, z + 1] = Block.BIRCH_LEAVES;
-                            blocks[x + 1, high + 5, z - 1] = Block.BIRCH_LEAVES;
-                            blocks[x + 2, high + 4, z] = Block.BIRCH_LEAVES;
-                            blocks[x, high + 4, z] = Block.BIRCH_LEAVES;
-                            blocks[x + 1, high + 4, z + 1] = Block.BIRCH_LEAVES;
-                            blocks[x + 1, high + 4, z - 1] = Block.BIRCH_LEAVES;
-
-                            blocks[x + 2, high + 4, z + 1] = Block.BIRCH_LEAVES;
-                            blocks[x, high + 4, z - 1] = Block.BIRCH_LEAVES;
-                            blocks[x + 2, high + 4, z - 1] = Block.BIRCH_LEAVES;
-                            blocks[x, high + 4, z + 1] = Block.BIRCH_LEAVES;
-                            blocks[x + 2, high + 5, z + 1] = Block.BIRCH_LEAVES;
-                            blocks[x, high + 5, z - 1] = Block.BIRCH_LEAVES;
-                            blocks[x + 2, high + 5, z - 1] = Block.BIRCH_LEAVES;
-                            blocks[x, high + 5, z + 1] = Block.BIRCH_LEAVES;
-
-                            blocks[x + 3, high + 4, z] = Block.BIRCH_LEAVES;
-                            blocks[x - 1, high + 4, z] = Block.BIRCH_LEAVES;
-                            blocks[x + 1, high + 4, z + 2] = Block.BIRCH_LEAVES;
-                            blocks[x + 1, high + 4, z - 2] = Block.BIRCH_LEAVES;
+                            for (int lx = x - 4; lx <= x + 4; lx++)
+                            {
+                                for (int ly = high + 4; ly <= high + 10; ly++)
+                                {
+                                    for (int lz = z - 3; lz <= z + 3; lz++)
+                                    {
+                                        if (blocks[lx, ly, lz] == Block.AIR &&
+                                           ((lx > 0 && blocks[lx - 1, ly, lz] == Block.OAK_LOG) ||
+                                           (lx < 15 && blocks[lx + 1, ly, lz] == Block.OAK_LOG) ||
+                                           (ly > 0 && blocks[lx, ly - 1, lz] == Block.OAK_LOG) ||
+                                           (ly < 255 && blocks[lx, ly + 1, lz] == Block.OAK_LOG) ||
+                                           (lz > 0 && blocks[lx, ly, lz - 1] == Block.OAK_LOG) ||
+                                           (lz < 15 && blocks[lx, ly, lz + 1] == Block.OAK_LOG) ||
+                                           (lx > 0 && lz > 0 && blocks[lx - 1, ly, lz - 1] == Block.OAK_LOG) ||
+                                           (lx < 15 && lz < 15 && blocks[lx + 1, ly, lz + 1] == Block.OAK_LOG) ||
+                                           (lz > 0 && lx < 15 && blocks[lx + 1, ly, lz - 1] == Block.OAK_LOG) ||
+                                           (lz < 15 && lz > 0 && blocks[lx - 1, ly, lz + 1] == Block.OAK_LOG))) {
+                                            blocks[lx, ly, lz] = Block.BIRCH_LEAVES;
+                                        }
+                                    }
+                                }
+                            }
                         }
                         for (int y = 0; y < high; y++)
                         {

@@ -48,7 +48,7 @@ namespace craftinggame.Graphics
             GL.ReadBuffer(ReadBufferMode.None);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
-            lightProjection = Matrix4.CreateOrthographic(200f, 200f, NEAR_PLANE, FAR_PLANE);
+            lightProjection = Matrix4.CreateOrthographic(185f, 185f, NEAR_PLANE, FAR_PLANE);
         }
 
         public static void PreludeRender()
