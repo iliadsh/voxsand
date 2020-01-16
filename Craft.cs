@@ -168,6 +168,7 @@ namespace craftinggame
             ChunkMesh.PreludeNormalRender();
             RenderChunks(ChunkMesh.chunkShader);
 
+            GL.Disable(EnableCap.CullFace);
             ChunkMesh.PreludeWaterRender();
             RenderWater();
 

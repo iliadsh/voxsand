@@ -5,9 +5,12 @@ in vec2 texCoord;
 flat in int layer;
 in vec3 Normal;
 in vec4 FragPosInLightSpace;
+in float visibility;
 
 uniform sampler2DArray texture0;
 uniform sampler2D texture1;
+
+const vec3 skyColour = vec3(0.5, 0.5, 0.6);
 
 float ShadowCalculation(vec4 fragPosLightSpace) 
 {
@@ -53,6 +56,8 @@ void main()
 	texel = vec4(tempxl, texel.w);
 	if (texel.a < 0.7)
 		discard;
+
+	texel = mix(vec4(skyColour, 1.0), texel, visibility);
 
 	FragColor = texel;
 }
