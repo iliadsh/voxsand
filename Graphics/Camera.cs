@@ -45,7 +45,7 @@ namespace craftinggame.Graphics
 
         public Matrix4 GetProjectionMatrix()
         {
-            return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 500f);
+            return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 200f);
         }
 
         public void UpdateVectors()

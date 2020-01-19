@@ -9,8 +9,9 @@ in float visibility;
 
 uniform sampler2DArray texture0;
 uniform sampler2D texture1;
+uniform vec3 lightDir;
 
-const vec3 skyColour = vec3(0.7, 0.7, 0.8);
+const vec3 skyColour = vec3(0.8, 0.8, 0.9);
 
 float ShadowCalculation(vec4 fragPosLightSpace) 
 {

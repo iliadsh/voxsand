@@ -23,12 +23,12 @@ void main()
 {
 	layer = int(aLayer);
 	texCoord = aTexCoord;
-	Normal = aNormal * mat3(transpose(inverse(model)));
+	Normal = aNormal;// * mat3(transpose(inverse(model)));
 
 	FragPosInLightSpace = vec4(aPosition, 1) * model * lightView * lightProjection;
 
 	vec4 positionRelativeToCam = vec4(aPosition, 1) * model * view;
-	float distance = length(positionRelativeToCam.xyz);
+	float distance = max(0, length(positionRelativeToCam.xyz) - 50);
 	visibility = exp(-pow((distance*density),gradient));
 	visibility = clamp(visibility, 0.0, 1.0);
 

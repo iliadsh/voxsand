@@ -10,6 +10,8 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Input;
 using craftinggame.Graphics;
 using craftinggame.Mechanics;
+using ObjLoader.Loader.Loaders;
+using System.IO;
 
 namespace craftinggame
 {
@@ -46,6 +48,12 @@ namespace craftinggame
             player = new Player(10, Width / Height);
             chunks = new ConcurrentDictionary<(int x, int z), Chunk>();
             skybox = new Skybox();
+
+            var objLoaderFactory = new ObjLoaderFactory();
+            var objLoader = objLoaderFactory.Create();
+            var fileStream = new FileStream("Resources\\models\\HyRig3.obj", FileMode.Open);
+            var result = objLoader.Load(fileStream);
+
             ShadowMap.Setup();
             chunkMeshingThread = new Thread(MeshChunks);
             chunkMeshingThread.Start();
@@ -153,7 +161,7 @@ namespace craftinggame
             player.camera.view = player.camera.GetViewMatrix();
             player.camera.projection = player.camera.GetProjectionMatrix();
 
-            GL.Disable(EnableCap.CullFace);
+            //GL.Disable(EnableCap.CullFace);
             ShadowMap.PreludeRender();
             RenderChunks(ShadowMap.shadowShader);
 
@@ -189,10 +197,10 @@ namespace craftinggame
                     if (chunk.Value.mesh != null)
                         chunk.Value.KillMesh();
 
-                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts);
+                    chunk.Value.mesh = new ChunkMesh(chunk.Value.verts, chunk.Value.position);
                     chunk.Value.verts = null;
 
-                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts);
+                    chunk.Value.waterMesh = new ChunkMesh(chunk.Value.waterVerts, chunk.Value.position);
                     chunk.Value.waterVerts = null;
 
                     chunk.Value.needsRemesh = false;
@@ -227,7 +235,7 @@ namespace craftinggame
 
                     if (p1ss.Z < 0 && p2ss.Z < 0 && p3ss.Z < 0 && p3ss.Z < 0 && p11ss.Z < 0 && p12ss.Z < 0 && p13ss.Z < 0 && p13ss.Z < 0) continue;
 
-                    chunk.Value.mesh.Render(chunk.Key, shader);
+                    chunk.Value.mesh.Render(shader);
                 }
             }
         }
@@ -238,7 +246,7 @@ namespace craftinggame
             {
                 if (chunk.Value.waterMesh != null)
                 {
-                    chunk.Value.waterMesh.Render(chunk.Key, ChunkMesh.chunkWaterShader);
+                    chunk.Value.waterMesh.Render(ChunkMesh.chunkWaterShader);
                 }
             }
         }

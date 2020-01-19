@@ -5,7 +5,7 @@ in vec3 TexCoords;
 
 uniform samplerCube skybox;
 
-const vec3 fogColour = vec3(0.7, 0.7, 0.8);
+const vec3 fogColour = vec3(0.8, 0.8, 0.9);
 const float lowerLimit = 0.0;
 const float upperLimit = 0.5;
 

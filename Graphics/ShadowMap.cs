@@ -18,6 +18,7 @@ namespace craftinggame.Graphics
         public const float NEAR_PLANE = 1.0f, FAR_PLANE = 300f;
         public static Matrix4 lightProjection;
         public static Matrix4 lightView;
+        public static Vector3 lightDir;
 
         public static void Setup()
         {
@@ -59,6 +60,7 @@ namespace craftinggame.Graphics
             var lightPos = playerPos + offset;
             lightPos.Y = 260f;
             var lightLook = playerPos - offset;
+            lightDir = Vector3.Normalize(lightPos - lightLook);
             lightView = Matrix4.LookAt(lightPos, lightLook, new Vector3(0, 1, 0));
             shadowShader.Use();
             shadowShader.SetMatrix4("lightProjection", lightProjection);

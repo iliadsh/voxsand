@@ -13,6 +13,7 @@ namespace craftinggame.Graphics
         public static Shader chunkShader = new Shader("chunk_shader.vert", "chunk_shader.frag");
         public static Shader chunkWaterShader = new Shader("chunk_water_shader.vert", "chunk_water_shader.frag");
         public static ChunkTexture chunkTexture = new ChunkTexture("textures");
+        public Matrix4 model = Matrix4.Identity;
 
         public static void PreludeRender()
         {
@@ -27,6 +28,9 @@ namespace craftinggame.Graphics
             chunkShader.Use();
             chunkShader.SetMatrix4("lightProjection", ShadowMap.lightProjection);
             chunkShader.SetMatrix4("lightView", ShadowMap.lightView);
+            chunkShader.SetMatrix4("view", Craft.theCraft.player.camera.view);
+            chunkShader.SetMatrix4("projection", Craft.theCraft.player.camera.projection);
+            //chunkShader.SetVector3("lightDir", ShadowMap.lightDir);
         }
 
         public static void PreludeWaterRender()
@@ -34,12 +38,14 @@ namespace craftinggame.Graphics
             GL.Enable(EnableCap.Blend);
             chunkWaterShader.Use();
             chunkWaterShader.SetFloat("globalTime", Craft.globalTime);
+            chunkWaterShader.SetMatrix4("view", Craft.theCraft.player.camera.view);
+            chunkWaterShader.SetMatrix4("projection", Craft.theCraft.player.camera.projection);
         }
 
         int VAO;
         int VBO;
         int vertAmount;
-        public ChunkMesh(float[] verts)
+        public ChunkMesh(float[] verts, (int x, int z) pos)
         {
             VAO = GL.GenVertexArray();
             GL.BindVertexArray(VAO);
@@ -64,15 +70,13 @@ namespace craftinggame.Graphics
             GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 9 * sizeof(float), 6 * sizeof(float));
 
             vertAmount = verts.Length / 9;
+            model = Matrix4.CreateTranslation(pos.x * 16, 0, pos.z * 16);
         }
 
-        public void Render((int x, int z) pos, Shader usedShader)
+        public void Render(Shader usedShader)
         {
             GL.BindVertexArray(VAO);
-            var model = Matrix4.Identity * Matrix4.CreateTranslation(pos.x * 16, 0, pos.z * 16);
             usedShader.SetMatrix4("model", model);
-            usedShader.SetMatrix4("view", Craft.theCraft.player.camera.view);
-            usedShader.SetMatrix4("projection", Craft.theCraft.player.camera.projection);
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, vertAmount);
         }

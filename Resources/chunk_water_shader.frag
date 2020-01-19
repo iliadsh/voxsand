@@ -5,7 +5,7 @@ in vec2 texCoord;
 flat in int layer;
 in float visibility;
 
-const vec3 skyColour = vec3(0.7, 0.7, 0.8);
+const vec3 skyColour = vec3(0.8, 0.8, 0.9);
 
 uniform sampler2DArray texture0;
 
